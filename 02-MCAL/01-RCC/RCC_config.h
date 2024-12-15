@@ -4,8 +4,8 @@
 /* Version   : v1.0                                           */
 /************************************************************ */
 
-#ifndef RCC_CONFIG_H
-#define RCC_CONFIG_H
+#ifndef RCC_CONFIG_H_
+#define RCC_CONFIG_H_
 
 
 /* System/Processor Clock Types Options :*/
@@ -13,14 +13,14 @@
 //  RCC_HSE_CRYSTAL  
 //  RCC_HSI 
 //  RCC_PLL
-#define SYSTEM_CLOCK_TYPE   RCC_HSI 
+#define SYSTEM_CLOCK_TYPE   RCC_PLL 
 
 
 /* PLL_EN options:
     ENABLE      *
     DISABLE     */
-#define PHASE_LOCKED_LOOP_PLL_EN  DISABLE
-#if(PHASE_LOCKED_LOOP_PLL_EN==ENABLE)
+#define RCC_PLL_EN  ENABLE
+#if RCC_PLL_EN==ENABLE
 
 /*PLL_INPUT_CLOCK options :
     PLL_HSI_DEV_2
@@ -46,7 +46,6 @@
     PLL_INPUT_CLOCK_X13
     PLL_INPUT_CLOCK_X14
     PLL_INPUT_CLOCK_X15
-    PLL_INPUT_CLOCK_X16
     PLL_INPUT_CLOCK_X16
 */
 #define PLL_MUL_FACTOR PLL_INPUT_CLOCK_X2

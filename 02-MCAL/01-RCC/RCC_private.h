@@ -4,8 +4,8 @@
 /* Version   : v1.0                                           */
 /************************************************************ */
 
-#ifndef RCC_PRIVATE_H
-#define RCC_PRIVATE_H
+#ifndef RCC_PRIVATE_H_
+#define RCC_PRIVATE_H_
 
 
 #define RCC_BASE_ADDR            (0x40021000) 
@@ -50,9 +50,9 @@ enum
     RCC_CFGR_PLLMUL2_Pos     ,  // Bit 18-21: PLL multiplication factor
     RCC_CFGR_PLLMUL3_Pos     ,  // Bit 18-21: PLL multiplication factor
     RCC_CFGR_USBPRE_Pos      ,  // Bit 22: USB prescaler
-    RCC_CFGR_MCO0_Pos  = 24  , // Bit 24-26: USB prescaler
+    RCC_CFGR_MCO0_Pos  = 24  ,  // Bit 24-26: USB prescaler
     RCC_CFGR_MCO1_Pos        ,  // Bit 24-26: USB prescaler
-    RCC_CFGR_MCO2_Pos          // Bit 24-26: USB prescaler
+    RCC_CFGR_MCO2_Pos           // Bit 24-26: USB prescaler
 };
 
 
@@ -91,42 +91,43 @@ typedef struct
 #define RCC_PTR                      ((volatile RCC_REGS*)(RCC_BASE_ADDR))
 
 
-/* System/Processor Clock Types*/
-enum
-{
-    RCC_HSE_RC=0,
-    RCC_HSE_CRYSTAL,
-    RCC_HSI,
-    RCC_PLL
-};
+/* * * * * * * * * * * * * * * * * * * * * * * * * *
+ *  System/Processor Clock Types                   *
+ * * * * * * * * * * * * * * * * * * * * * * * * * */
+#define  RCC_HSE_RC         0            
+#define  RCC_HSE_CRYSTAL    1        
+#define  RCC_HSI            2
+#define  RCC_PLL            3
 
-/* PLL multiplication factor options : */
-enum
-{
-    PLL_INPUT_CLOCK_X2=0,
-    PLL_INPUT_CLOCK_X3,
-    PLL_INPUT_CLOCK_X4,
-    PLL_INPUT_CLOCK_X5,
-    PLL_INPUT_CLOCK_X6,
-    PLL_INPUT_CLOCK_X7,
-    PLL_INPUT_CLOCK_X8,
-    PLL_INPUT_CLOCK_X9,
-    PLL_INPUT_CLOCK_X10,
-    PLL_INPUT_CLOCK_X11,
-    PLL_INPUT_CLOCK_X12,
-    PLL_INPUT_CLOCK_X13,
-    PLL_INPUT_CLOCK_X14,
-    PLL_INPUT_CLOCK_X15,
-    PLL_INPUT_CLOCK_X16
-};
 
-/**PLL INPUT CLOCK options :*/
-enum
-{
-    PLL_HSI_DEV_2=0,
-    PLL_HSE_DEV_2,
-    PLL_HSE
-};
+/* * * * * * * * * * * * * * * * * * * * * * * * * *
+ *  PLL multiplication factor options              *
+ * * * * * * * * * * * * * * * * * * * * * * * * * */
+#define  PLL_INPUT_CLOCK_X2     0
+#define  PLL_INPUT_CLOCK_X3     1
+#define  PLL_INPUT_CLOCK_X4     3
+#define  PLL_INPUT_CLOCK_X5     4
+#define  PLL_INPUT_CLOCK_X6     5
+#define  PLL_INPUT_CLOCK_X7     6
+#define  PLL_INPUT_CLOCK_X8     7
+#define  PLL_INPUT_CLOCK_X9     8
+#define  PLL_INPUT_CLOCK_X10    9
+#define  PLL_INPUT_CLOCK_X11    10
+#define  PLL_INPUT_CLOCK_X12    11
+#define  PLL_INPUT_CLOCK_X13    12
+#define  PLL_INPUT_CLOCK_X14    13
+#define  PLL_INPUT_CLOCK_X15    14
+#define  PLL_INPUT_CLOCK_X16    15
+
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * *
+ *  PLL INPUT CLOCK options                        *
+ * * * * * * * * * * * * * * * * * * * * * * * * * */
+#define PLL_HSI_DEV_2   0
+#define PLL_HSE_DEV_2   1
+#define PLL_HSE         2
+
 
 
 #endif

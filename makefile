@@ -4,7 +4,7 @@
 
 # Compiler and Flags
 CC = arm-none-eabi-gcc
-CCFLAGS = -Wall -Wextra -mcpu=cortex-m3 -mthumb
+CCFLAGS = -Wall -Wextra -I -mcpu=cortex-m3 -mthumb
 
 #-std=c++17 -g -O2
 

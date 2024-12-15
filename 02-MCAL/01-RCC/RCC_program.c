@@ -46,7 +46,6 @@ void RCC_voidSetSystemClock(void)
             RCC_voidTurnOnHSE(BYPASS_MODE);
             SET_BIT(RCC_PTR->RCC_CFGR,RCC_CFGR_SW0_Pos);        //HSE selected as system clock
             CLEAR_BIT(RCC_PTR->RCC_CFGR,RCC_CFGR_SW1_Pos);      //HSE selected as system clock
-            
     #elif   SYSTEM_CLOCK_TYPE==RCC_HSE_CRYSTAL
             RCC_voidTurnOnHSE(NORMAL_HSE_MODE);
             SET_BIT(RCC_PTR->RCC_CFGR,RCC_CFGR_SW0_Pos);        //HSE selected as system clock
@@ -120,12 +119,15 @@ void RCC_voidTurnOnPLL(void)
         while(!GET_BIT(RCC_PTR->RCC_CR,RCC_CR_PLLRDY_Pos));     //Polling until PLL is ready.
         SET_BIT(RCC_PTR->RCC_CIR, 20);   //This bit is set by software to clear the PLLRDYF flag of the interrupt
         
-        #if  PLL_INPUT_CLOCK == PLL_HSI_DEV_2
+        #if ( PLL_INPUT_CLOCK==PLL_HSI_DEV_2 )
+            RCC_voidTurnOnHSI();
             CLEAR_BIT(RCC_PTR->RCC_CFGR,RCC_CFGR_PLLSRC_Pos);       //HSI oscillator clock / 2 selected as PLL input clock
-        #elif  PLL_INPUT_CLOCK == PLL_HSE_DEV_2
+        #elif  (PLL_INPUT_CLOCK==PLL_HSE_DEV_2)
+            RCC_voidTurnOnHSE(NORMAL_HSE_MODE);
             SET_BIT(RCC_PTR->RCC_CFGR,RCC_CFGR_PLLSRC_Pos);         //HSE oscillator clock selected as PLL input clock
             SET_BIT(RCC_PTR->RCC_CFGR,RCC_CFGR_PLLXTPRE_Pos);       //HSE Clock Divided by 2
-        #elif  PLL_INPUT_CLOCK == PLL_HSE
+        #elif  (PLL_INPUT_CLOCK == PLL_HSE)
+            RCC_voidTurnOnHSE(NORMAL_HSE_MODE);
             SET_BIT(RCC_PTR->RCC_CFGR,RCC_CFGR_PLLSRC_Pos);         //HSE oscillator clock selected as PLL input clock
             CLEAR_BIT(RCC_PTR->RCC_CFGR,RCC_CFGR_PLLXTPRE_Pos);     //HSE Clock Not Divided
         #else
@@ -135,4 +137,10 @@ void RCC_voidTurnOnPLL(void)
         RCC_PTR->RCC_CFGR&=0xFFC3FFFF;
         RCC_PTR->RCC_CFGR|=(PLL_MUL_FACTOR<<18);
     #endif    
+}
+
+
+void RCC_Init(void)
+{
+
 }

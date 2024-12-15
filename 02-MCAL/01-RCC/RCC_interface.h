@@ -4,8 +4,8 @@
 /* Version   : v1.0                                           */
 /************************************************************ */
 
-#ifndef RCC_INTERFACE_H
-#define RCC_INTERFACE_H
+#ifndef RCC_INTERFACE_H_
+#define RCC_INTERFACE_H_
 
 /* Enumeration for RCC Peripheral Buses */
 typedef enum
@@ -83,6 +83,10 @@ typedef enum{
     NORMAL_HSE_MODE,    //The external 4-16 MHz crystal oscillator is used as the clock source.
     BYPASS_MODE         //Instead of using a crystal, an external clock signal (square wave, etc.) is directly fed to the OSC_IN pin. ex RC circuit
 }HSE_MODES;
+
+
+void RCC_Init(void);
+
 
 /* Function to Enable the Peripheral Clock
  * Parameters:
