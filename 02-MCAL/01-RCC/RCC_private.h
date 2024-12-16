@@ -130,4 +130,16 @@ typedef struct
 
 
 
+/* * * * * * * * * * * * * * * * * * * * * * * * * *
+ *  MCO OUPUT CLOCK options                        *
+ * * * * * * * * * * * * * * * * * * * * * * * * * */
+ #define MCO_NO_CLOCK_SELECTED     0
+ #define MCO_SYSCLK_SELECTED       4
+ #define MCO_HSI_SELECTED          5
+ #define MCO_HSE_SELECTED          6
+ #define MCO_PLL_DIV_2_SELECTED    7
+
+
+
+
 #endif

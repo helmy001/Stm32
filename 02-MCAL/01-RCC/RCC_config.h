@@ -13,13 +13,13 @@
 //  RCC_HSE_CRYSTAL  
 //  RCC_HSI 
 //  RCC_PLL
-#define SYSTEM_CLOCK_TYPE   RCC_PLL 
+#define SYSTEM_CLOCK_TYPE   RCC_HSI 
 
 
 /* PLL_EN options:
     ENABLE      *
     DISABLE     */
-#define RCC_PLL_EN  ENABLE
+#define RCC_PLL_EN  DISABLE
 #if RCC_PLL_EN==ENABLE
 
 /*PLL_INPUT_CLOCK options :
@@ -63,15 +63,15 @@
 #if (ENABLE_MCO==ENABLE)
 /*
 MCO_Select : Microcontroller clock output Options:
-    NO_CLOCK
-    SYSCLK
-    HSI_CLOCK
-    HSE_CLOCK
-    PLL_CLOCK_DIV_2
+ MCO_NO_CLOCK_SELECTED     
+ MCO_SYSCLK_SELECTED       
+ MCO_HSI_SELECTED          
+ MCO_HSE_SELECTED          
+ MCO_PLL_DIV_2_SELECTED    
 */
 /* Note: This clock output may have some truncated cycles at startup or during MCO clock source switching.
  Caution: make sure that this clock does not exceed 50 MHz (the maximum IO speed).*/
-#define MCO_SELECT  SYSCLK
+#define MCO_SELECT  MCO_NO_CLOCK_SELECTED
 
 #endif
 

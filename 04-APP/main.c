@@ -27,7 +27,8 @@ void fun(volatile u8 temp)
 int main(void)
 {
 
-    RCC_voidPeripheralClockEnable(AHB_SYSTEM_BUS,RCC_AHB_DMA2EN);
+    RCC_Init();
+    RCC_voidPeripheralClockEnable(AHB_SYSTEM_BUS,RCC_APB2_IOPAEN);
 
     const u8 local_const_x=1;
     volatile int local_x=10;

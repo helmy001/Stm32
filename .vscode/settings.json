@@ -61,5 +61,6 @@
     "rcc_interface.h": "c",
     "rcc_private.h": "c",
     "rcc_config.h": "c"
-  }
+  },
+  "CodeGPT.apiKey": "CodeGPT Plus Beta"
 }

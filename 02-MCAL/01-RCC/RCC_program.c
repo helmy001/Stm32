@@ -34,8 +34,33 @@ void RCC_voidPeripheralClockEnable(RCC_PERIPHERAL_BUS Copy_u8PeripheralBus, u8 C
         //return ;//ERROR
             break;
     }   
-    
 }
+
+/* Function to Disable the Peripheral Clock
+ * Parameters:
+ * - Copy_u8PeripheralBus: Specifies the bus type (AHB, APB1, or APB2)
+ * - Copy_u8PeripheralType: Specifies the peripheral to enable on the selected bus
+ */
+void RCC_voidPeripheralClockDisable(RCC_PERIPHERAL_BUS Copy_u8PeripheralBus, u8 Copy_u8PeripheralType)
+{
+
+    switch (Copy_u8PeripheralBus)
+    {
+        case AHB_SYSTEM_BUS:
+            CLEAR_BIT(RCC_PTR->RCC_AHBENR,Copy_u8PeripheralType);
+            break;
+        case APB1_PERIPHERAL_BUS:
+            CLEAR_BIT(RCC_PTR->RCC_APB1ENR,Copy_u8PeripheralType);
+            break;
+        case APB2_PERIPHERAL_BUS:
+            CLEAR_BIT(RCC_PTR->RCC_APB2ENR,Copy_u8PeripheralType);
+            break;
+        default:
+        //return ;//ERROR
+        break;
+    }   
+}
+
 
 /* Function to Set the System Clock
  * Configures the system clock source and related settings.
@@ -139,8 +164,29 @@ void RCC_voidTurnOnPLL(void)
     #endif    
 }
 
+/*Function to set the prescaler for AHB , APB1 , APB2 Bused */
+void RCC_voidSetBusesPrescaler(RCC_BUSES_PRESCALER* Copy_str)
+{
+    if(NULL==Copy_str)
+    {
+        //TODO: Handle Error return
+        return;
+    }
+    /*Clear All buses Prescaler Bits in the RCC_cfgr register*/
+    RCC_PTR->RCC_CFGR&=0xFFFFC00F;
+    /*Set the Presclaler Values each in its Specific bits*/
+    RCC_PTR->RCC_CFGR|=(Copy_str->AHB_Prescaler<<4)|(Copy_str->ABP1_Prescaler<<8)|(Copy_str->ABP2_Prescaler<<11);   
+}
 
+/*RCC Driver Initialization Function*/
 void RCC_Init(void)
 {
+    RCC_voidSetSystemClock();
 
+    #if (ENABLE_MCO==ENABLE)
+        /*Clear MCO bits*/
+        RCC_PTR->RCC_CFGR&=0xF8FFFFFF;
+        /*Set the Micro controller clock output specific bits based on config file Selection*/
+        RCC_PTR->RCC_CFGR|=(MCO_SELECT<<24);
+    #endif
 }

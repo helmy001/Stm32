@@ -15,6 +15,35 @@ typedef enum
     APB2_PERIPHERAL_BUS        // APB2 Peripheral Bus (Advanced Peripheral Bus 2)
 } RCC_PERIPHERAL_BUS;
 
+typedef enum
+{
+    SYSCLK_NOT_DIVIDED=0,
+    SYSCLK_DIV_2 =8,
+    SYSCLK_DIV_4,
+    SYSCLK_DIV_8,
+    SYSCLK_DIV_16,
+    SYSCLK_DIV_64,
+    SYSCLK_DIV_128,
+    SYSCLK_DIV_256,
+    SYSCLK_DIV_512
+}RCC_AHB_PRESCALER;
+
+typedef enum
+{
+    HCLK_NOT_DIVIDED =0,
+    HCLK_DIV_2 =4,
+    HCLK_DIV_4 ,
+    HCLK_DIV_8 ,
+    HCLK_DIV_16
+}RCC_APB_PRESCALER;
+
+typedef struct
+{
+    RCC_AHB_PRESCALER AHB_Prescaler;
+    RCC_APB_PRESCALER ABP1_Prescaler;
+    RCC_APB_PRESCALER ABP2_Prescaler;
+}RCC_BUSES_PRESCALER;
+
 /* Enumeration for AHB Peripheral Types and their Clock Enable Bits */
 enum
 {
@@ -85,6 +114,7 @@ typedef enum{
 }HSE_MODES;
 
 
+/*RCC Driver Initialization Function*/
 void RCC_Init(void);
 
 
@@ -96,6 +126,14 @@ void RCC_Init(void);
 void RCC_voidPeripheralClockEnable(RCC_PERIPHERAL_BUS Copy_u8PeripheralBus, u8 Copy_u8PeripheralType);
 
 
+/* Function to Disable the Peripheral Clock
+ * Parameters:
+ * - Copy_u8PeripheralBus: Specifies the bus type (AHB, APB1, or APB2)
+ * - Copy_u8PeripheralType: Specifies the peripheral to enable on the selected bus
+ */
+void RCC_voidPeripheralClockDisable(RCC_PERIPHERAL_BUS Copy_u8PeripheralBus, u8 Copy_u8PeripheralType);
+
+
 /* Function to Set the System Clock
  * Configures the system clock source and related settings.
  */
@@ -105,9 +143,11 @@ void RCC_voidSetSystemClock(void);
 /* Function to Read the Current System Clock Source
  * Returns:
  * - u8: Identifier for the currently active system clock source
+ *        0=00: HSI oscillator used as system clock
+ *        1=01: HSE oscillator used as system clock
+ *        2=10: PLL used as system clock
  */
 u8 RCC_u8ReadSystemClock(void);
-
 
 /* Function to Turn on the high speed external clock
  * Parameters:
@@ -115,9 +155,13 @@ u8 RCC_u8ReadSystemClock(void);
  */
 void RCC_voidTurnOnHSE(HSE_MODES Copy_u8Mode);
 
-
+/* Function to Turn on the high speed Internal clock*/
 void RCC_voidTurnOnHSI(void);
+
+/* Function to Turn on the PHASE LOCKED LOOP*/
 void RCC_voidTurnOnPLL(void);
 
+/*Function to set the prescaler for AHB , APB1 , APB2 Bused */
+void RCC_voidSetBusesPrescaler(RCC_BUSES_PRESCALER* Copy_str);
 
 #endif
