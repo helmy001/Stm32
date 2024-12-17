@@ -1,7 +1,7 @@
 #include "stdio.h"
 #include "..\01-LIB\STD_TYPES.h"
 #include "..\01-LIB\BIT_MATH.h"
-
+#include "..\02-MCAL\01-RCC\RCC_interface.h"
 
 volatile int global_x_init=5;
 volatile int global_x_uninit;
@@ -13,7 +13,7 @@ volatile int global_y_uninit;
 static volatile int st_gl_x_uninit;
 static volatile int st_gl_x_Init=7;
 
-volatile const int global_const_x=5;
+const int global_const_x=5;
 
 static volatile u8 x=0;
 
@@ -26,6 +26,9 @@ void fun(volatile u8 temp)
 
 int main(void)
 {
+
+    RCC_voidPeripheralClockEnable(AHB_SYSTEM_BUS,RCC_AHB_DMA2EN);
+
     const u8 local_const_x=1;
     volatile int local_x=10;
     local_x=local_const_x;

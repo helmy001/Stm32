@@ -3,8 +3,8 @@
 # -------------------------------
 
 # Compiler and Flags
-CXX = gcc
-CXXFLAGS = -Wall -Wextra
+CC = arm-none-eabi-gcc
+CCFLAGS = -Wall -Wextra -mcpu=cortex-m3 -mthumb
 
 #-std=c++17 -g -O2
 
@@ -40,14 +40,14 @@ TARGET = app_program.exe
 # -------------------------------
 
 # Default Target: Build everything
-all: $(TARGET)
+all: $(LIBOBJ) $(MCALOBJ) $(HALOBJ) $(APPOBJ)
 
 
 # Link all object files into the executable
-$(TARGET): $(LIBOBJ) $(MCALOBJ) $(HALOBJ) $(APPOBJ)
-	@echo "Linking all object files into $(TARGET)..."
-	@mkdir -p bin
-	$(CXX) $(CXXFLAGS) $(BUILD_DIR)/*.o -o $@
+#$(TARGET): $(LIBOBJ) $(MCALOBJ) $(HALOBJ) $(APPOBJ)
+#	@echo "Linking all object files into $(TARGET)..."
+#	@mkdir -p bin
+#	$(CC) $(CCFLAGS) $(BUILD_DIR)/*.o -o $@
 
 # -------------------------------
 # Compilation Rule for .c -> .o
@@ -55,31 +55,25 @@ $(TARGET): $(LIBOBJ) $(MCALOBJ) $(HALOBJ) $(APPOBJ)
 # Compile .c files to .o files for all directories
 $(BUILD_DIR)/%.o: $(LIBDIR)/%.c
 	@echo "Compiling $< into $@..."
-	$(CXX) $(CXXFLAGS) -c $< -o $(BUILD_DIR)/$(notdir $@)
+	$(CC) $(CCFLAGS) -c $< -o $(BUILD_DIR)/$(notdir $@)
 
 $(BUILD_DIR)/%.o: $(MCALDIR)/%.c
 	@echo "Compiling $< into $@..."
-	$(CXX) $(CXXFLAGS) -c $< -o $(BUILD_DIR)/$(notdir $@)
+	$(CC) $(CCFLAGS) -c $< -o $(BUILD_DIR)/$(notdir $@)
 
 $(BUILD_DIR)/%.o: $(HALDIR)/%.c
 	@echo "Compiling $< into $@..."
-	$(CXX) $(CXXFLAGS) -c $< -o $(BUILD_DIR)/$(notdir $@)
+	$(CC) $(CCFLAGS) -c $< -o $(BUILD_DIR)/$(notdir $@)
 
 $(BUILD_DIR)/%.o: $(APPDIR)/%.c
 	@echo "Compiling $< into $@..."
-	$(CXX) $(CXXFLAGS) -c $< -o $(BUILD_DIR)/$(notdir $@)
+	$(CC) $(CCFLAGS) -c $< -o $(BUILD_DIR)/$(notdir $@)
 
 # -------------------------------
 # Debug and Release Targets
 # -------------------------------
 
-# Debug build with no optimizations
-debug: CXXFLAGS += -O0
-debug: all
 
-# Release build with maximum optimizations
-release: CXXFLAGS += -O3
-release: all
 
 # -------------------------------
 # Running and Cleaning Targets
