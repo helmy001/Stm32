@@ -3,8 +3,8 @@
 # -------------------------------
 
 # Compiler and Flags
-CC = arm-none-eabi-gcc
-CCFLAGS = -Wall -Wextra -mcpu=cortex-m3 -mthumb
+	CC = arm-none-eabi-gcc
+	CCFLAGS = -Wall -Wextra --specs=nosys.specs -nolibc -nostartfiles -mcpu=cortex-m3 -mthumb
 
 #-std=c++17 -g -O2
 
@@ -14,18 +14,22 @@ LIBDIR = 01-LIB
 MCALDIR = 02-MCAL
 HALDIR = 03-HAL
 APPDIR = 04-APP
+STARTUP =StartUp
 
 # Source Subdirectories
 LIBSRC = $(wildcard $(LIBDIR)/*/*.c)
 MCALSRC = $(wildcard $(MCALDIR)/*/*.c)
 HALSRC = $(wildcard $(HALDIR)/*/*.c)
 APPSRC = $(wildcard $(APPDIR)/*.c)
+STARTUPSRC= StartUp/StartUpCode.c
+
 
 # Object Files (Output of Compilation in BUILD_DIR)
 LIBOBJ = $(patsubst $(LIBDIR)/%.c, $(BUILD_DIR)/%.o, $(LIBSRC))
 MCALOBJ = $(patsubst $(MCALDIR)/%.c, $(BUILD_DIR)/%.o, $(MCALSRC))
 HALOBJ = $(patsubst $(HALDIR)/%.c, $(BUILD_DIR)/%.o, $(HALSRC))
 APPOBJ = $(patsubst $(APPDIR)/%.c, $(BUILD_DIR)/%.o, $(APPSRC))
+STARTUPOBJ= $(patsubst $(STARTUP)/%.c, $(BUILD_DIR)/%.o, $(STARTUPSRC))
 
 # Final Executable
 TARGET = app_program.exe
@@ -40,14 +44,13 @@ TARGET = app_program.exe
 # -------------------------------
 
 # Default Target: Build everything
-all: $(LIBOBJ) $(MCALOBJ) $(HALOBJ) $(APPOBJ)
+all: $(TARGET)
 
 
-# Link all object files into the executable
-#$(TARGET): $(LIBOBJ) $(MCALOBJ) $(HALOBJ) $(APPOBJ)
-#	@echo "Linking all object files into $(TARGET)..."
-#	@mkdir -p bin
-#	$(CC) $(CCFLAGS) $(BUILD_DIR)/*.o -o $@
+# #Link all object files into the executable
+$(TARGET): $(LIBOBJ) $(MCALOBJ) $(HALOBJ) $(APPOBJ) $(STARTUPOBJ)
+	@echo "Linking all object files into $(TARGET)..."
+	$(CC) $(CCFLAGS) -T Linker/LinkerScript.ld  $(BUILD_DIR)/*.o -o $@ -Wl,-Map=output.map
 
 # -------------------------------
 # Compilation Rule for .c -> .o
@@ -68,6 +71,11 @@ $(BUILD_DIR)/%.o: $(HALDIR)/%.c
 $(BUILD_DIR)/%.o: $(APPDIR)/%.c
 	@echo "Compiling $< into $@..."
 	$(CC) $(CCFLAGS) -c $< -o $(BUILD_DIR)/$(notdir $@)
+
+$(BUILD_DIR)/%.o: $(STARTUP)/StartUpCode.c
+	@echo "Compiling $< into $@..."
+	$(CC) $(CCFLAGS) -c $< -o $(BUILD_DIR)/$(notdir $@)
+
 
 # -------------------------------
 # Debug and Release Targets

@@ -60,7 +60,8 @@
   "files.associations": {
     "rcc_interface.h": "c",
     "rcc_private.h": "c",
-    "rcc_config.h": "c"
+    "rcc_config.h": "c",
+    "*.asm": "cpp"
   },
   "CodeGPT.apiKey": "CodeGPT Plus Beta"
 }
