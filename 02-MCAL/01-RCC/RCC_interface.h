@@ -78,6 +78,12 @@ enum
     RCC_APB1_DACEN             // Enable Clock for DAC (Digital-to-Analog Converter)
 } ;
 
+/*Enumeration for HSE Types */
+typedef enum{
+    NORMAL_HSE_MODE,    //The external 4-16 MHz crystal oscillator is used as the clock source.
+    BYPASS_MODE         //Instead of using a crystal, an external clock signal (square wave, etc.) is directly fed to the OSC_IN pin. ex RC circuit
+}HSE_MODES;
+
 /* Function to Enable the Peripheral Clock
  * Parameters:
  * - Copy_u8PeripheralBus: Specifies the bus type (AHB, APB1, or APB2)
@@ -85,15 +91,29 @@ enum
  */
 void RCC_voidPeripheralClockEnable(RCC_PERIPHERAL_BUS Copy_u8PeripheralBus, u8 Copy_u8PeripheralType);
 
+
 /* Function to Set the System Clock
  * Configures the system clock source and related settings.
  */
 void RCC_voidSetSystemClock(void);
+
 
 /* Function to Read the Current System Clock Source
  * Returns:
  * - u8: Identifier for the currently active system clock source
  */
 u8 RCC_u8ReadSystemClock(void);
+
+
+/* Function to Turn on the high speed external clock
+ * Parameters:
+ * - Copy_u8Mode: Specifies the HSE MODE either (NORMAL_HSE_MODE, BYPASS_MODE)
+ */
+void RCC_voidTurnOnHSE(HSE_MODES Copy_u8Mode);
+
+
+void RCC_voidTurnOnHSI(void);
+void RCC_voidTurnOnPLL(void);
+
 
 #endif

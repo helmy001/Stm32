@@ -42,12 +42,24 @@ void RCC_voidPeripheralClockEnable(RCC_PERIPHERAL_BUS Copy_u8PeripheralBus, u8 C
  */
 void RCC_voidSetSystemClock(void)
 {
-    #if     SYSTEM_CLOCK_TYPE==RCC_HSE
-
+    #if     SYSTEM_CLOCK_TYPE==RCC_HSE_RC
+            RCC_voidTurnOnHSE(BYPASS_MODE);
+            SET_BIT(RCC_PTR->RCC_CFGR,RCC_CFGR_SW0_Pos);        //HSE selected as system clock
+            CLEAR_BIT(RCC_PTR->RCC_CFGR,RCC_CFGR_SW1_Pos);      //HSE selected as system clock
+            
+    #elif   SYSTEM_CLOCK_TYPE==RCC_HSE_CRYSTAL
+            RCC_voidTurnOnHSE(NORMAL_HSE_MODE);
+            SET_BIT(RCC_PTR->RCC_CFGR,RCC_CFGR_SW0_Pos);        //HSE selected as system clock
+            CLEAR_BIT(RCC_PTR->RCC_CFGR,RCC_CFGR_SW1_Pos);      //HSE selected as system clock
     #elif   SYSTEM_CLOCK_TYPE==RCC_HSI
-    
+            RCC_voidTurnOnHSI();
+            CLEAR_BIT(RCC_PTR->RCC_CFGR,RCC_CFGR_SW0_Pos);      //HSI selected as system clock
+            CLEAR_BIT(RCC_PTR->RCC_CFGR,RCC_CFGR_SW1_Pos);      //HSI selected as system clock
     #elif   SYSTEM_CLOCK_TYPE==RCC_PLL
-    
+            RCC_voidTurnOnPLL();
+            CLEAR_BIT(RCC_PTR->RCC_CFGR,RCC_CFGR_SW0_Pos);    //PLL selected as system clock
+            SET_BIT(RCC_PTR->RCC_CFGR,RCC_CFGR_SW1_Pos);      //PLL selected as system clock
+  
     #else
         #error("You Chosed a Wrong Clock Type")
     #endif
@@ -56,8 +68,71 @@ void RCC_voidSetSystemClock(void)
 /* Function to Read the Current System Clock Source
  * Returns:
  * - u8: Identifier for the currently active system clock source
+ *        00: HSI oscillator used as system clock
+ *        01: HSE oscillator used as system clock
+ *        10: PLL used as system clock
  */
 u8 RCC_u8ReadSystemClock(void)
 {
-    return 0;
+   return RCC_PTR->RCC_CFGR&0x0000000C;
+}
+
+
+/* Function to Turn on the high speed external clock
+ * Parameters:
+ * - Copy_u8Mode: Specifies the HSE MODE either (NORMAL_HSE_MODE, BYPASS_MODE)
+ */
+void RCC_voidTurnOnHSE(HSE_MODES Copy_u8Mode)
+{       
+    
+    CLEAR_BIT(RCC_PTR->RCC_CR,RCC_CR_HSEON_Pos);  //Disable HSE oscillator as The HSEBYP bit can be written only if the HSE oscillator is disabled. 
+    switch(Copy_u8Mode)
+    {
+        case NORMAL_HSE_MODE:
+        CLEAR_BIT(RCC_PTR->RCC_CR,RCC_CR_HSEBYP_Pos);  //Clear bypass bit to choose external 4-16 MHz crystal oscillator not bypassed
+        break;
+        case BYPASS_MODE:
+        SET_BIT(RCC_PTR->RCC_CR,RCC_CR_HSEBYP_Pos);  //Set bypass bit to choose external oscillator bypassed with external clock
+        break;
+        default:
+        // TODO: return error
+        break;
+    } 
+    SET_BIT(RCC_PTR->RCC_CR,RCC_CR_HSEON_Pos);              //Enable HSE oscillator
+    while(!GET_BIT(RCC_PTR->RCC_CR,RCC_CR_HSERDY_Pos));     //Wait until HSE oscillator is stable
+    SET_BIT(RCC_PTR->RCC_CIR, 19);                          //This bit is set by software to clear the HSERDYF flag of the interrupt
+}
+
+
+void RCC_voidTurnOnHSI(void)
+{
+    SET_BIT(RCC_PTR->RCC_CR,RCC_CR_HSION_Pos);          //Internal 8 MHz RC oscillator ON
+    while(!GET_BIT(RCC_PTR->RCC_CR,RCC_CR_HSIRDY_Pos));     //Wait until HSI oscillator is stable
+    SET_BIT(RCC_PTR->RCC_CIR, 18);   //This bit is set by software to clear the HSERDYF flag of the interrupt
+    //TODO: /* Edit the Function to include the Trimming of Hsi clock part*/
+    RCC_PTR->RCC_CR&=0xFFFFFF87;    //trimming value that is added to the HSICAL[7:0] bits ,The default value is 16
+}
+
+void RCC_voidTurnOnPLL(void)
+{
+    #if(RCC_PLL_EN==ENABLE)
+        SET_BIT(RCC_PTR->RCC_CR,RCC_CR_PLLON_Pos);              //PLL Enable
+        while(!GET_BIT(RCC_PTR->RCC_CR,RCC_CR_PLLRDY_Pos));     //Polling until PLL is ready.
+        SET_BIT(RCC_PTR->RCC_CIR, 20);   //This bit is set by software to clear the PLLRDYF flag of the interrupt
+        
+        #if  PLL_INPUT_CLOCK == PLL_HSI_DEV_2
+            CLEAR_BIT(RCC_PTR->RCC_CFGR,RCC_CFGR_PLLSRC_Pos);       //HSI oscillator clock / 2 selected as PLL input clock
+        #elif  PLL_INPUT_CLOCK == PLL_HSE_DEV_2
+            SET_BIT(RCC_PTR->RCC_CFGR,RCC_CFGR_PLLSRC_Pos);         //HSE oscillator clock selected as PLL input clock
+            SET_BIT(RCC_PTR->RCC_CFGR,RCC_CFGR_PLLXTPRE_Pos);       //HSE Clock Divided by 2
+        #elif  PLL_INPUT_CLOCK == PLL_HSE
+            SET_BIT(RCC_PTR->RCC_CFGR,RCC_CFGR_PLLSRC_Pos);         //HSE oscillator clock selected as PLL input clock
+            CLEAR_BIT(RCC_PTR->RCC_CFGR,RCC_CFGR_PLLXTPRE_Pos);     //HSE Clock Not Divided
+        #else
+            #error("Error : you Choosed a Wrong clock input for the pll")
+        #endif
+
+        RCC_PTR->RCC_CFGR&=0xFFC3FFFF;
+        RCC_PTR->RCC_CFGR|=(PLL_MUL_FACTOR<<18);
+    #endif    
 }
