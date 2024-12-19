@@ -3,3 +3,8 @@
 /* Date      : 17/12/2024                                     */
 /* Version   : v1.0                                           */
 /************************************************************ */
+#ifndef GPIO_CONFIG_H
+#define GPIO_CONFIG_H
+
+
+#endif
