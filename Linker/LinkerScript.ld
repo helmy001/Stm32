@@ -28,48 +28,48 @@ SECTIONS
         . = ALIGN(4);
         KEEP(*(.isr_vector))
         . = ALIGN(4);      
-    }> FLASH
+    }>FLASH
 
     .text :
     {
         . = ALIGN(4);
-        *.(text)
-        *.(text*)
+        *(.text)
+        *(.text*)
         . = ALIGN(4);
         _etext = .;
-    }> FLASH
+    }>FLASH
 
     .rodata :
     {
         . = ALIGN(4);
-        *.(rodata)
-        *.(rodata*)
+        *(.rodata)
+        *(.rodata*)
         . = ALIGN(4);
     }>FLASH
 
-    .bss :
-    {
-        _ibss = .;
-        . = ALIGN(4);
-        *.(bss)
-        *.(bss*)
-        . = ALIGN(4);
-        _ebss = .;
-    }>RAM
-
-      /* Initial (constant) values for data is placed in flash after the program code */
+          /* Initial (constant) values for data is placed in flash after the program code */
     _iFlashdata = LOADADDR(.data);
 
     .data :
     {
         _idata = .;
         . = ALIGN(4);
-        *.(data)
-        *.(data*)
+        *(.data)
+        *(.data*)
         . = ALIGN(4);
         _edata = .;
-    }>RAM AT > FLASH
-    
+    }>RAM AT> FLASH
+
+    .bss :
+    {
+        _ibss = .;
+        . = ALIGN(4);
+        *(.bss)
+        *(.bss*)
+        . = ALIGN(4);
+        _ebss = .;
+    }>RAM
+
     .user_heap_stack :
     {
         /* Align the starting address of the heap and stack to an 8-byte boundary.
@@ -81,6 +81,6 @@ SECTIONS
         /* Reserve Stack space */
         . = . + _Min_Stack_Size;
         . = ALIGN(8);
-    }
+    }>RAM
 
 }

@@ -32,7 +32,7 @@ APPOBJ = $(patsubst $(APPDIR)/%.c, $(BUILD_DIR)/%.o, $(APPSRC))
 STARTUPOBJ= $(patsubst $(STARTUP)/%.c, $(BUILD_DIR)/%.o, $(STARTUPSRC))
 
 # Final Executable
-TARGET = app_program.exe
+TARGET = app_program.elf
 
 # -------------------------------
 # Phony Targets (Tasks)
@@ -95,5 +95,5 @@ run: all
 # Clean up all build artifacts
 clean:
 	@echo "Cleaning up build files..."
-	@rm -rf $(BUILD_DIR)/*.o $(TARGET)
+	@rm -rf $(BUILD_DIR)/*.o $(TARGET) output.map output.hex
 	@echo "Clean complete."

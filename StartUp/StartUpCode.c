@@ -8,19 +8,18 @@
 
 
 
-extern _idata,_edata,_ibss,_ebss;
-extern _estack;
-extern _iFlashdata;
+extern u32 _idata,_edata,_ibss,_ebss;
+extern u32 _estack;
+extern u32 _iFlashdata;
 
-extern main(void);
+extern int main(void);
 
 
 static void CopyDataFromFlashToRam();
 static void Init_Bss_Zeros();
 
 void Default_Handler(void);
-
-void Reset_Handler(void);
+void Reset_Handler(void);           
 void NMI_Handler                   (void) __attribute__((alias ("Default_Handler")));
 void HardFault_Handler             (void) __attribute__((alias ("Default_Handler")));
 void MemManage_Handler             (void) __attribute__((alias ("Default_Handler")));
@@ -90,14 +89,15 @@ void DMA2_Channel2_IRQHandler  	   (void) __attribute__((alias ("Default_Handler
 void DMA2_Channel3_IRQHandler  	   (void) __attribute__((alias ("Default_Handler")));
 void DMA2_Channel4_5_IRQHandler	   (void) __attribute__((alias ("Default_Handler")));
 
-u32 * const MSP_Value = (u32 *)&_estack;
+//u32 * const MSP_Value = (u32 *)&_estack;
 
+#define ISR_COUNT 76
 
 typedef void (*isr_ptr)(void);
 
-__attribute__ ((section (".isr_vector")))  static const isr_ptr IVT[75] =
+__attribute__ ((used,section (".isr_vector")))  static const isr_ptr IVT[ISR_COUNT] =
 {
-  MSP_Value,
+  (isr_ptr)&_estack,
   Reset_Handler,
   NMI_Handler,
   HardFault_Handler,
@@ -192,7 +192,7 @@ static void CopyDataFromFlashToRam()
     u32* Dest_Ram_Ptr=(u32*) &_idata;
     while(Dest_Ram_Ptr < (u32*) &_edata)
     {
-        *Dest_Ram_Ptr=*Src_Flash_Ptr;
+        *Dest_Ram_Ptr++=*Src_Flash_Ptr++;
     }
 }
 
