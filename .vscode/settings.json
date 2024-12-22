@@ -65,7 +65,10 @@
     "bit_math.h": "c",
     "nvic_config.h": "c",
     "nvic_interface.h": "c",
-    "std_types.h": "c"
+    "std_types.h": "c",
+    "compare": "cpp",
+    "limits": "cpp",
+    "new": "cpp"
   },
   "CodeGPT.apiKey": "CodeGPT Plus Beta"
 }

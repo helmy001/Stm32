@@ -3,7 +3,7 @@
 #include "..\02-MCAL\01-RCC\RCC_interface.h"
 #include "..\02-MCAL\02-GPIO\GPIO_interface.h"
 #include "..\02-MCAL\03-NVIC\NVIC_interface.h"
-
+#include "..\02-MCAL\04-EXTI\EXTI_interface.h"
 
 
 int main(void)
