@@ -72,6 +72,8 @@ typedef enum
 }NVIC_InterruptType;
 
 
+
+
 /*
  * @brief Enables the specified interrupt in the NVIC.
  * 
@@ -120,12 +122,20 @@ void NVIC_voidClearPendingFlag(NVIC_InterruptType Copy_InterruptType);
 /* 
  * This Function Read the Active Flag of the passed interrupt 
  * to check if the current interrupt isr being exceuted or not
- * 
- * @param Copy_InterruptType The interrupt type whose pending flag is to be cleared. 
- *                           This parameter should be of type NVIC_InterruptType.
  */
 u8 NVIC_u8ReadActiveFlag(NVIC_InterruptType Copy_InterruptType);
 
+
+
+/*
+ * @brief Sets the priority of an interrupt.
+ * 
+ * This function sets the priority of an interrupt by specifying the group and sub-group numbers.
+*  @param Copy_InterruptType The interrupt type for which the priority will be set.
+ * @param Copy_GroupNum The group number of the interrupt priority.
+ * @param Copy_SubGroupNum The sub-group number of the interrupt priority.
+ */
+void NVIC_voidSetInterruptPriority(NVIC_InterruptType Copy_InterruptType,u8 Copy_GroupNum,u8 Copy_SubGroupNum);
 
 
 #endif
