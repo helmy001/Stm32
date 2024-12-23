@@ -2,7 +2,7 @@
 #include "..\01-LIB\BIT_MATH.h"
 #include "..\02-MCAL\01-RCC\RCC_interface.h"
 #include "..\02-MCAL\02-GPIO\GPIO_interface.h"
-
+#include "..\02-MCAL\03-NVIC\NVIC_interface.h"
 
 
 
@@ -21,19 +21,21 @@ int main(void)
 
     while(1)
     {   
-	
-        if(GPIO_u8ReadPinValue(GPIO_PORTA,GPIO_PIN8))
-        {
-            GPIO_voidWritePin(GPIO_PORTB, GPIO_PIN14, GPIO_PIN_SET);
-        }else
-        {
-            GPIO_voidWritePin(GPIO_PORTB, GPIO_PIN14, GPIO_PIN_RESET);
-        }
+
+
+        
+        // if(GPIO_u8ReadPinValue(GPIO_PORTA,GPIO_PIN8))
+        // {
+        //     GPIO_voidWritePin(GPIO_PORTB, GPIO_PIN14, GPIO_PIN_SET);
+        // }else
+        // {
+        //     GPIO_voidWritePin(GPIO_PORTB, GPIO_PIN14, GPIO_PIN_RESET);
+        // }
     
-	    GPIO_voidWritePin(GPIO_PORTC, GPIO_PIN13, GPIO_PIN_SET);
-	    for(unsigned long i=0;i<1000000;i++);
-	    GPIO_voidWritePin(GPIO_PORTC, GPIO_PIN13, GPIO_PIN_RESET);
-        for(unsigned long i=0;i<1000000;i++);
+	    // GPIO_voidWritePin(GPIO_PORTC, GPIO_PIN13, GPIO_PIN_SET);
+	    // for(unsigned long i=0;i<1000000;i++);
+	    // GPIO_voidWritePin(GPIO_PORTC, GPIO_PIN13, GPIO_PIN_RESET);
+        // for(unsigned long i=0;i<1000000;i++);
 
 
     }
