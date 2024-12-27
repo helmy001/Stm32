@@ -13,6 +13,7 @@ LOAD 00-Build/EXTI_program.o
 LOAD 00-Build/GPIO_program.o
 LOAD 00-Build/NVIC_program.o
 LOAD 00-Build/RCC_program.o
+LOAD 00-Build/SYSTICK_program.o
 LOAD 00-Build/StartUpCode.o
 LOAD 00-Build/main.o
 START GROUP
@@ -33,7 +34,7 @@ END GROUP
  .isr_vector    0x08000000      0x130 00-Build/StartUpCode.o
                 0x08000130                . = ALIGN (0x4)
 
-.text           0x08000130      0xb64
+.text           0x08000130      0xc64
                 0x08000130                . = ALIGN (0x4)
  *(.text)
  .text          0x08000130       0x80 00-Build/AFIO_program.o
@@ -52,126 +53,132 @@ END GROUP
                 0x08000654                GPIO_voidByteWrite
                 0x080006d4                GPIO_u8ReadByte
                 0x080006f0                GPIO_voidLockPin
- .text          0x0800070c      0x1fc 00-Build/NVIC_program.o
-                0x0800070c                NVIC_voidEnableInterrupt
-                0x08000754                NVIC_voidDisableInterrupt
-                0x0800079c                NVIC_voidSetPendingFlag
-                0x080007e4                NVIC_voidClearPendingFlag
-                0x0800082c                NVIC_u8ReadActiveFlag
-                0x080008b4                NVIC_voidSetInterruptPriority
- .text          0x08000908      0x2b8 00-Build/RCC_program.o
-                0x08000908                RCC_voidPeripheralClockEnable
-                0x08000980                RCC_voidPeripheralClockDisable
-                0x080009fc                RCC_voidSetSystemClock
-                0x08000a24                RCC_u8ReadSystemClock
-                0x08000a40                RCC_voidTurnOnHSE
-                0x08000ab4                RCC_voidTurnOnHSI
-                0x08000af8                RCC_voidTurnOnPLL
-                0x08000b64                RCC_voidSetBusesPrescaler
-                0x08000bb4                RCC_Init
- .text          0x08000bc0       0x94 00-Build/StartUpCode.o
-                0x08000bc0                Reset_Handler
-                0x08000c48                TIM8_TRG_COM_IRQHandler
-                0x08000c48                TIM8_CC_IRQHandler
-                0x08000c48                DebugMon_Handler
-                0x08000c48                TIM1_CC_IRQHandler
-                0x08000c48                HardFault_Handler
-                0x08000c48                TIM6_IRQHandler
-                0x08000c48                SysTick_Handler
-                0x08000c48                PVD_IRQHandler
-                0x08000c48                SDIO_IRQHandler
-                0x08000c48                PendSV_Handler
-                0x08000c48                NMI_Handler
-                0x08000c48                EXTI3_IRQHandler
-                0x08000c48                USB_HP_CAN_TX_IRQHandler
-                0x08000c48                EXTI0_IRQHandler
-                0x08000c48                I2C2_EV_IRQHandler
-                0x08000c48                UsageFault_Handler
-                0x08000c48                ADC1_2_IRQHandler
-                0x08000c48                SPI1_IRQHandler
-                0x08000c48                CAN_SCE_IRQHandler
-                0x08000c48                TAMPER_IRQHandler
-                0x08000c48                TIM8_UP_IRQHandler
-                0x08000c48                DMA2_Channel2_IRQHandler
-                0x08000c48                DMA1_Channel4_IRQHandler
-                0x08000c48                USART3_IRQHandler
-                0x08000c48                RTC_IRQHandler
-                0x08000c48                DMA1_Channel7_IRQHandler
-                0x08000c48                EXTI2_IRQHandler
-                0x08000c48                UART5_IRQHandler
-                0x08000c48                ADC3_IRQHandler
-                0x08000c48                TIM4_IRQHandler
-                0x08000c48                CAN_RX1_IRQHandler
-                0x08000c48                DMA2_Channel1_IRQHandler
-                0x08000c48                I2C1_EV_IRQHandler
-                0x08000c48                DMA1_Channel6_IRQHandler
-                0x08000c48                UART4_IRQHandler
-                0x08000c48                TIM3_IRQHandler
-                0x08000c48                RCC_IRQHandler
-                0x08000c48                TIM1_TRG_COM_IRQHandler
-                0x08000c48                DMA1_Channel1_IRQHandler
-                0x08000c48                Default_Handler
-                0x08000c48                EXTI15_10_IRQHandler
-                0x08000c48                TIM7_IRQHandler
-                0x08000c48                TIM5_IRQHandler
-                0x08000c48                EXTI9_5_IRQHandler
-                0x08000c48                SPI2_IRQHandler
-                0x08000c48                USB_LP_CAN_RX0_IRQHandler
-                0x08000c48                MemManage_Handler
-                0x08000c48                SVC_Handler
-                0x08000c48                DMA1_Channel5_IRQHandler
-                0x08000c48                EXTI4_IRQHandler
-                0x08000c48                DMA1_Channel3_IRQHandler
-                0x08000c48                FSMC_IRQHandler
-                0x08000c48                TIM1_UP_IRQHandler
-                0x08000c48                WWDG_IRQHandler
-                0x08000c48                TIM2_IRQHandler
-                0x08000c48                TIM1_BRK_IRQHandler
-                0x08000c48                EXTI1_IRQHandler
-                0x08000c48                RTCAlarm_IRQHandler
-                0x08000c48                DMA2_Channel4_5_IRQHandler
-                0x08000c48                USART2_IRQHandler
-                0x08000c48                I2C2_ER_IRQHandler
-                0x08000c48                DMA1_Channel2_IRQHandler
-                0x08000c48                TIM8_BRK_IRQHandler
-                0x08000c48                FLASH_IRQHandler
-                0x08000c48                BusFault_Handler
-                0x08000c48                USART1_IRQHandler
-                0x08000c48                SPI3_IRQHandler
-                0x08000c48                I2C1_ER_IRQHandler
-                0x08000c48                DMA2_Channel3_IRQHandler
- .text          0x08000c54       0x40 00-Build/main.o
-                0x08000c54                main
+ .text          0x0800070c      0x1f8 00-Build/NVIC_program.o
+                0x0800070c                NVIC_voidInit
+                0x08000718                NVIC_voidEnableInterrupt
+                0x08000760                NVIC_voidDisableInterrupt
+                0x080007a8                NVIC_voidSetPendingFlag
+                0x080007f0                NVIC_voidClearPendingFlag
+                0x08000838                NVIC_u8ReadActiveFlag
+                0x080008c0                NVIC_voidSetInterruptPriority
+ .text          0x08000904      0x2d4 00-Build/RCC_program.o
+                0x08000904                RCC_voidPeripheralClockEnable
+                0x0800097c                RCC_voidPeripheralClockDisable
+                0x080009f8                RCC_voidSetSystemClock
+                0x08000a20                RCC_u8ReadSystemClock
+                0x08000a3c                RCC_voidTurnOnHSE
+                0x08000ab0                RCC_voidTurnOnHSI
+                0x08000af4                RCC_voidTurnOnPLL
+                0x08000b60                RCC_voidSetBusesPrescaler
+                0x08000bb0                RCC_Init
+ .text          0x08000bd8       0xc8 00-Build/SYSTICK_program.o
+                0x08000bd8                SYSTICK_u32GetMillis
+                0x08000bec                SYSTICK_voidInitTick
+                0x08000c20                SYSTICK_voidResumeTick
+                0x08000c3c                SYSTICK_voidSuspendTick
+                0x08000c58                SysTick_Handler
+                0x08000c74                SYSTICK_voidBlockingDelay
+ .text          0x08000ca0       0x94 00-Build/StartUpCode.o
+                0x08000ca0                Reset_Handler
+                0x08000d28                TIM8_TRG_COM_IRQHandler
+                0x08000d28                TIM8_CC_IRQHandler
+                0x08000d28                DebugMon_Handler
+                0x08000d28                TIM1_CC_IRQHandler
+                0x08000d28                HardFault_Handler
+                0x08000d28                TIM6_IRQHandler
+                0x08000d28                PVD_IRQHandler
+                0x08000d28                SDIO_IRQHandler
+                0x08000d28                PendSV_Handler
+                0x08000d28                NMI_Handler
+                0x08000d28                EXTI3_IRQHandler
+                0x08000d28                USB_HP_CAN_TX_IRQHandler
+                0x08000d28                I2C2_EV_IRQHandler
+                0x08000d28                UsageFault_Handler
+                0x08000d28                ADC1_2_IRQHandler
+                0x08000d28                SPI1_IRQHandler
+                0x08000d28                CAN_SCE_IRQHandler
+                0x08000d28                TAMPER_IRQHandler
+                0x08000d28                TIM8_UP_IRQHandler
+                0x08000d28                DMA2_Channel2_IRQHandler
+                0x08000d28                DMA1_Channel4_IRQHandler
+                0x08000d28                USART3_IRQHandler
+                0x08000d28                RTC_IRQHandler
+                0x08000d28                DMA1_Channel7_IRQHandler
+                0x08000d28                EXTI2_IRQHandler
+                0x08000d28                UART5_IRQHandler
+                0x08000d28                ADC3_IRQHandler
+                0x08000d28                TIM4_IRQHandler
+                0x08000d28                CAN_RX1_IRQHandler
+                0x08000d28                DMA2_Channel1_IRQHandler
+                0x08000d28                I2C1_EV_IRQHandler
+                0x08000d28                DMA1_Channel6_IRQHandler
+                0x08000d28                UART4_IRQHandler
+                0x08000d28                TIM3_IRQHandler
+                0x08000d28                RCC_IRQHandler
+                0x08000d28                TIM1_TRG_COM_IRQHandler
+                0x08000d28                DMA1_Channel1_IRQHandler
+                0x08000d28                Default_Handler
+                0x08000d28                EXTI15_10_IRQHandler
+                0x08000d28                TIM7_IRQHandler
+                0x08000d28                TIM5_IRQHandler
+                0x08000d28                EXTI9_5_IRQHandler
+                0x08000d28                SPI2_IRQHandler
+                0x08000d28                USB_LP_CAN_RX0_IRQHandler
+                0x08000d28                MemManage_Handler
+                0x08000d28                SVC_Handler
+                0x08000d28                DMA1_Channel5_IRQHandler
+                0x08000d28                EXTI4_IRQHandler
+                0x08000d28                DMA1_Channel3_IRQHandler
+                0x08000d28                FSMC_IRQHandler
+                0x08000d28                TIM1_UP_IRQHandler
+                0x08000d28                WWDG_IRQHandler
+                0x08000d28                TIM2_IRQHandler
+                0x08000d28                TIM1_BRK_IRQHandler
+                0x08000d28                RTCAlarm_IRQHandler
+                0x08000d28                DMA2_Channel4_5_IRQHandler
+                0x08000d28                USART2_IRQHandler
+                0x08000d28                I2C2_ER_IRQHandler
+                0x08000d28                DMA1_Channel2_IRQHandler
+                0x08000d28                TIM8_BRK_IRQHandler
+                0x08000d28                FLASH_IRQHandler
+                0x08000d28                BusFault_Handler
+                0x08000d28                USART1_IRQHandler
+                0x08000d28                SPI3_IRQHandler
+                0x08000d28                I2C1_ER_IRQHandler
+                0x08000d28                DMA2_Channel3_IRQHandler
+ .text          0x08000d34       0x5e 00-Build/main.o
+                0x08000d34                main
  *(.text*)
-                0x08000c94                . = ALIGN (0x4)
-                0x08000c94                _etext = .
+                0x08000d94                . = ALIGN (0x4)
+ *fill*         0x08000d92        0x2 
+                0x08000d94                _etext = .
 
-.glue_7         0x08000c94        0x0
- .glue_7        0x08000c94        0x0 linker stubs
+.glue_7         0x08000d94        0x0
+ .glue_7        0x08000d94        0x0 linker stubs
 
-.glue_7t        0x08000c94        0x0
- .glue_7t       0x08000c94        0x0 linker stubs
+.glue_7t        0x08000d94        0x0
+ .glue_7t       0x08000d94        0x0 linker stubs
 
-.vfp11_veneer   0x08000c94        0x0
- .vfp11_veneer  0x08000c94        0x0 linker stubs
+.vfp11_veneer   0x08000d94        0x0
+ .vfp11_veneer  0x08000d94        0x0 linker stubs
 
-.v4_bx          0x08000c94        0x0
- .v4_bx         0x08000c94        0x0 linker stubs
+.v4_bx          0x08000d94        0x0
+ .v4_bx         0x08000d94        0x0 linker stubs
 
-.iplt           0x08000c94        0x0
- .iplt          0x08000c94        0x0 00-Build/EXTI_program.o
+.iplt           0x08000d94        0x0
+ .iplt          0x08000d94        0x0 00-Build/EXTI_program.o
 
-.rel.dyn        0x08000c94        0x0
- .rel.iplt      0x08000c94        0x0 00-Build/EXTI_program.o
+.rel.dyn        0x08000d94        0x0
+ .rel.iplt      0x08000d94        0x0 00-Build/EXTI_program.o
 
-.rodata         0x08000c94        0x0
-                0x08000c94                . = ALIGN (0x4)
+.rodata         0x08000d94        0x0
+                0x08000d94                . = ALIGN (0x4)
  *(.rodata)
  *(.rodata*)
-                0x08000c94                . = ALIGN (0x4)
-                0x08000c94                _iFlashdata = LOADADDR (.data)
+                0x08000d94                . = ALIGN (0x4)
+                0x08000d94                _iFlashdata = LOADADDR (.data)
 
-.data           0x20000000       0x34 load address 0x08000c94
+.data           0x20000000       0x34 load address 0x08000d94
                 0x20000000                _idata = .
                 0x20000000                . = ALIGN (0x4)
  *(.data)
@@ -180,33 +187,34 @@ END GROUP
  .data          0x20000000        0xc 00-Build/GPIO_program.o
  .data          0x2000000c       0x28 00-Build/NVIC_program.o
  .data          0x20000034        0x0 00-Build/RCC_program.o
+ .data          0x20000034        0x0 00-Build/SYSTICK_program.o
  .data          0x20000034        0x0 00-Build/StartUpCode.o
  .data          0x20000034        0x0 00-Build/main.o
  *(.data*)
                 0x20000034                . = ALIGN (0x4)
                 0x20000034                _edata = .
 
-.igot.plt       0x20000034        0x0 load address 0x08000cc8
+.igot.plt       0x20000034        0x0 load address 0x08000dc8
  .igot.plt      0x20000034        0x0 00-Build/EXTI_program.o
 
-.bss            0x20000034        0x4 load address 0x08000cc8
+.bss            0x20000034        0x4 load address 0x08000dc8
                 0x20000034                _ibss = .
                 0x20000034                . = ALIGN (0x4)
  *(.bss)
  .bss           0x20000034        0x0 00-Build/AFIO_program.o
  .bss           0x20000034        0x0 00-Build/EXTI_program.o
  .bss           0x20000034        0x0 00-Build/GPIO_program.o
- .bss           0x20000034        0x1 00-Build/NVIC_program.o
- .bss           0x20000035        0x0 00-Build/RCC_program.o
- .bss           0x20000035        0x0 00-Build/StartUpCode.o
- .bss           0x20000035        0x0 00-Build/main.o
+ .bss           0x20000034        0x0 00-Build/NVIC_program.o
+ .bss           0x20000034        0x0 00-Build/RCC_program.o
+ .bss           0x20000034        0x4 00-Build/SYSTICK_program.o
+ .bss           0x20000038        0x0 00-Build/StartUpCode.o
+ .bss           0x20000038        0x0 00-Build/main.o
  *(.bss*)
                 0x20000038                . = ALIGN (0x4)
- *fill*         0x20000035        0x3 
                 0x20000038                _ebss = .
 
 .user_heap_stack
-                0x20000038      0x600 load address 0x08000cc8
+                0x20000038      0x600 load address 0x08000dc8
                 0x20000038                . = ALIGN (0x8)
                 0x20000238                . = (. + _Min_Heap_Size)
  *fill*         0x20000038      0x200 
@@ -223,6 +231,7 @@ LOAD linker stubs
  .comment       0x0000004d       0x4e 00-Build/GPIO_program.o
  .comment       0x0000004d       0x4e 00-Build/NVIC_program.o
  .comment       0x0000004d       0x4e 00-Build/RCC_program.o
+ .comment       0x0000004d       0x4e 00-Build/SYSTICK_program.o
  .comment       0x0000004d       0x4e 00-Build/StartUpCode.o
  .comment       0x0000004d       0x4e 00-Build/main.o
 
@@ -239,6 +248,8 @@ LOAD linker stubs
  .ARM.attributes
                 0x000000b4       0x2d 00-Build/RCC_program.o
  .ARM.attributes
-                0x000000e1       0x2d 00-Build/StartUpCode.o
+                0x000000e1       0x2d 00-Build/SYSTICK_program.o
  .ARM.attributes
-                0x0000010e       0x2d 00-Build/main.o
+                0x0000010e       0x2d 00-Build/StartUpCode.o
+ .ARM.attributes
+                0x0000013b       0x2d 00-Build/main.o

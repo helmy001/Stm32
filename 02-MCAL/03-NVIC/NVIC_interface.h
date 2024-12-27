@@ -73,6 +73,8 @@ typedef enum
 
 
 
+void NVIC_voidInit(void);
+
 
 /*
  * @brief Enables the specified interrupt in the NVIC.

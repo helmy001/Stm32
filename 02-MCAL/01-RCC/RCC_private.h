@@ -105,19 +105,19 @@ typedef struct
  * * * * * * * * * * * * * * * * * * * * * * * * * */
 #define  PLL_INPUT_CLOCK_X2     0
 #define  PLL_INPUT_CLOCK_X3     1
-#define  PLL_INPUT_CLOCK_X4     3
-#define  PLL_INPUT_CLOCK_X5     4
-#define  PLL_INPUT_CLOCK_X6     5
-#define  PLL_INPUT_CLOCK_X7     6
-#define  PLL_INPUT_CLOCK_X8     7
-#define  PLL_INPUT_CLOCK_X9     8
-#define  PLL_INPUT_CLOCK_X10    9
-#define  PLL_INPUT_CLOCK_X11    10
-#define  PLL_INPUT_CLOCK_X12    11
-#define  PLL_INPUT_CLOCK_X13    12
-#define  PLL_INPUT_CLOCK_X14    13
-#define  PLL_INPUT_CLOCK_X15    14
-#define  PLL_INPUT_CLOCK_X16    15
+#define  PLL_INPUT_CLOCK_X4     2
+#define  PLL_INPUT_CLOCK_X5     3
+#define  PLL_INPUT_CLOCK_X6     4
+#define  PLL_INPUT_CLOCK_X7     5
+#define  PLL_INPUT_CLOCK_X8     6
+#define  PLL_INPUT_CLOCK_X9     7
+#define  PLL_INPUT_CLOCK_X10    8
+#define  PLL_INPUT_CLOCK_X11    9
+#define  PLL_INPUT_CLOCK_X12    10
+#define  PLL_INPUT_CLOCK_X13    11
+#define  PLL_INPUT_CLOCK_X14    12
+#define  PLL_INPUT_CLOCK_X15    13
+#define  PLL_INPUT_CLOCK_X16    14
 
 
 

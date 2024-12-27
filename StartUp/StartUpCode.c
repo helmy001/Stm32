@@ -28,15 +28,15 @@ void UsageFault_Handler            (void) __attribute__((alias ("Default_Handler
 void SVC_Handler                   (void) __attribute__((alias ("Default_Handler")));
 void DebugMon_Handler              (void) __attribute__((alias ("Default_Handler")));
 void PendSV_Handler                (void) __attribute__((alias ("Default_Handler")));
-void SysTick_Handler               (void) __attribute__((alias ("Default_Handler")));
+void __attribute__((weak)) SysTick_Handler (void) __attribute__((alias ("Default_Handler")));
 void WWDG_IRQHandler           	   (void) __attribute__((alias ("Default_Handler")));
 void PVD_IRQHandler            	   (void) __attribute__((alias ("Default_Handler")));
 void TAMPER_IRQHandler         	   (void) __attribute__((alias ("Default_Handler")));
 void RTC_IRQHandler            	   (void) __attribute__((alias ("Default_Handler")));
 void FLASH_IRQHandler          	   (void) __attribute__((alias ("Default_Handler")));
 void RCC_IRQHandler            	   (void) __attribute__((alias ("Default_Handler")));
-void EXTI0_IRQHandler          	   (void) __attribute__((alias ("Default_Handler")));
-void EXTI1_IRQHandler          	   (void) __attribute__((alias ("Default_Handler")));
+void __attribute__((weak)) EXTI0_IRQHandler (void);
+void __attribute__((weak)) EXTI1_IRQHandler (void);
 void EXTI2_IRQHandler          	   (void) __attribute__((alias ("Default_Handler")));
 void EXTI3_IRQHandler          	   (void) __attribute__((alias ("Default_Handler")));
 void EXTI4_IRQHandler          	   (void) __attribute__((alias ("Default_Handler")));
@@ -208,3 +208,5 @@ static void Init_Bss_Zeros()
 void Default_Handler(void){
  return;
 }
+
+

@@ -140,10 +140,7 @@ void RCC_voidTurnOnHSI(void)
 void RCC_voidTurnOnPLL(void)
 {
     #if(RCC_PLL_EN==ENABLE)
-        SET_BIT(RCC_PTR->RCC_CR,RCC_CR_PLLON_Pos);              //PLL Enable
-        while(!GET_BIT(RCC_PTR->RCC_CR,RCC_CR_PLLRDY_Pos));     //Polling until PLL is ready.
-        SET_BIT(RCC_PTR->RCC_CIR, 20);   //This bit is set by software to clear the PLLRDYF flag of the interrupt
-        
+
         #if ( PLL_INPUT_CLOCK==PLL_HSI_DEV_2 )
             RCC_voidTurnOnHSI();
             CLEAR_BIT(RCC_PTR->RCC_CFGR,RCC_CFGR_PLLSRC_Pos);       //HSI oscillator clock / 2 selected as PLL input clock
@@ -159,8 +156,13 @@ void RCC_voidTurnOnPLL(void)
             #error("Error : you Choosed a Wrong clock input for the pll")
         #endif
 
-        RCC_PTR->RCC_CFGR&=0xFFC3FFFF;
-        RCC_PTR->RCC_CFGR|=(PLL_MUL_FACTOR<<18);
+        RCC_PTR->RCC_CFGR&=0xFFC3FFFF;          //reset the pll mul factor first
+        RCC_PTR->RCC_CFGR|=(PLL_MUL_FACTOR<<18);    //set the pllmul as selected in config file
+        SET_BIT(RCC_PTR->RCC_CR,RCC_CR_PLLON_Pos);              //PLL Enable
+        while(!GET_BIT(RCC_PTR->RCC_CR,RCC_CR_PLLRDY_Pos));     //Polling until PLL is ready.
+        SET_BIT(RCC_PTR->RCC_CIR, 20);   //This bit is set by software to clear the PLLRDYF flag of the interrupt
+
+
     #endif    
 }
 
@@ -182,7 +184,8 @@ void RCC_voidSetBusesPrescaler(RCC_BUSES_PRESCALER* Copy_str)
 void RCC_Init(void)
 {
     RCC_voidSetSystemClock();
-
+    RCC_BUSES_PRESCALER copy_prescaler_str={SYSCLK_NOT_DIVIDED,HCLK_DIV_2,HCLK_NOT_DIVIDED};
+    RCC_voidSetBusesPrescaler(&copy_prescaler_str);
     #if (ENABLE_MCO==ENABLE)
         /*Clear MCO bits*/
         RCC_PTR->RCC_CFGR&=0xF8FFFFFF;

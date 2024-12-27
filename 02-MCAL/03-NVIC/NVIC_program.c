@@ -29,6 +29,10 @@ static volatile u32* NVICx_str_arr[10]=
                                         };
 
 
+void NVIC_voidInit(void)
+{
+    NVIC_voidSetPriorityGroupingMode();
+}
 
 /*
  * This function enables the interrupt specified by the parameter 
@@ -158,6 +162,7 @@ static void NVIC_voidSetPriorityGroupingMode(void)
 {
     if(NVIC_VALIDATE_PRIORITY_MODE(PRIORITY_GROUPING_MODE))
     {
+        //TODO: impelent SCB driver and transfer this logic to it 
         u32 Vect_Key=0x05FA0000|((u32)PRIORITY_GROUPING_MODE<<8);
         *SCB_AIRCR_ADDR=Vect_Key;
     }
@@ -172,17 +177,16 @@ static void NVIC_voidSetPriorityGroupingMode(void)
 */
 void NVIC_voidSetInterruptPriority(NVIC_InterruptType Copy_InterruptType,u8 Copy_GroupNum,u8 Copy_SubGroupNum)
 {
-    static volatile u8 Priority_Mode_Set=0;
-    if(Priority_Mode_Set==0)               //Check if the split of group priority from subpriority is set or not in the SCB (system control block)
+    
+    if(Copy_InterruptType<60)
     {
-        NVIC_voidSetPriorityGroupingMode();     //Should be called once to configure number of bits for groubs and number of bits for sub-groubs
-        Priority_Mode_Set=1;                
+        //Copy_GroupNum is shifted by values from 0 to 4 depending on the Group and sub mode
+        u8 Priority4_bits=Copy_SubGroupNum|(Copy_GroupNum<<(PRIORITY_GROUPING_MODE-3));
+        // Set the Priority for the Passed Interrupt in its designated register shifted by 4 bits as the first 4 bits are reserved
+        NVIC_IPRx[(u8)Copy_InterruptType]=Priority4_bits<<4;        
     }else
     {
         //TODO: call error handling function or return error
     }
-    //Copy_GroupNum is shifted by values from 0 to 4 depending on the Group and sub mode
-    u8 Priority4_bits=Copy_SubGroupNum|(Copy_GroupNum<<(PRIORITY_GROUPING_MODE-3));
-    // Set the Priority for the Passed Interrupt in its designated register shifted by 4 bits as the first 4 bits are reserved
-    NVIC_IPRx[(u8)Copy_InterruptType]=Priority4_bits<<4;
+
 }
