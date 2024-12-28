@@ -13,13 +13,13 @@
 //  RCC_HSE_CRYSTAL  
 //  RCC_HSI 
 //  RCC_PLL
-#define SYSTEM_CLOCK_TYPE   RCC_PLL 
+#define SYSTEM_CLOCK_TYPE   RCC_HSE_CRYSTAL 
 
 
 /* PLL_EN options:
     ENABLE      *
     DISABLE     */
-#define RCC_PLL_EN  ENABLE
+#define RCC_PLL_EN  DISABLE
 #if RCC_PLL_EN==ENABLE
 
 /*PLL_INPUT_CLOCK options :

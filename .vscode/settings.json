@@ -71,7 +71,8 @@
     "new": "cpp",
     "systick_interface.h": "c",
     "systick_private.h": "c",
-    "systick_config.h": "c"
+    "systick_config.h": "c",
+    "type_traits": "c"
   },
   "CodeGPT.apiKey": "CodeGPT Plus Beta"
 }

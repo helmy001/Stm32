@@ -11,7 +11,7 @@
 /*Options : SYS_TICK_AHB
             SYS_TICK_AHB_DIV_8
 */
-#define SYSTICK_INPUT_CLOCK SYS_TICK_AHB
+#define SYSTICK_INPUT_CLOCK SYS_TICK_AHB_DIV_8
 
 
 #endif

@@ -12,6 +12,15 @@
 #define ENABLE_BIT_POS     0
 #define TICKINT_BIT_POS    1
 #define CLKSOURCE_BIT_POS  2
+#define COUNTFLAG_BIT_POS  16
+
+typedef enum
+{
+    ONE_SHOT_INTERVAL_FUNC=0,
+    PERIODIC_INTERVAL_FUNC,
+    APP_TIME_FUNC
+}SYSTICK_MODES_enu;
+
 typedef struct 
 {
     u32 STK_CTRL;
