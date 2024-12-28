@@ -16,17 +16,18 @@
 
 typedef enum
 {
-    ONE_SHOT_INTERVAL_FUNC=0,
+    NOT_RUNNING=0,
+    ONE_SHOT_INTERVAL_FUNC,
     PERIODIC_INTERVAL_FUNC,
     APP_TIME_FUNC
 }SYSTICK_MODES_enu;
 
 typedef struct 
 {
-    u32 STK_CTRL;
-    u32 STK_LOAD;
-    u32 STK_VAL;
-    u32 STK_CALIB;
+    u32 CTRL;
+    u32 LOAD;
+    u32 VAL;
+    u32 CALIB;
 }SYSTICK_str;
 
 #define SYSTICK_PTR         ((volatile SYSTICK_str *) (SYSTICK_BASE_ADDRESS))

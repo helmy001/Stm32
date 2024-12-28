@@ -85,7 +85,17 @@ void GPIO_voidWritePin(GPIO_PORTS_enu Copy_u8Port, GPIO_PINS_enu Copy_u8Pin ,GPI
     }
 }
 
-
+void GPIO_voidTogglePin(GPIO_PORTS_enu Copy_u8Port, GPIO_PINS_enu Copy_u8Pin)
+{
+    if(GPIO_VALIDATE_PORT(Copy_u8Port) && GPIO_VALIDATE_PIN(Copy_u8Pin))
+    {
+        Gpiox_str_arr[Copy_u8Port]->GPIOx_ODR^=(1<<Copy_u8Pin);     //toggle the value of the pin
+    }else
+    {
+        //TODO: CALl Error Handling Function
+        //ErrorFunction(Error_num);
+    }
+}
 u8 GPIO_u8ReadPinValue(GPIO_PORTS_enu Copy_u8Port, GPIO_PINS_enu Copy_u8Pin)
 {
     if(GPIO_VALIDATE_PORT(Copy_u8Port) && GPIO_VALIDATE_PIN(Copy_u8Pin))

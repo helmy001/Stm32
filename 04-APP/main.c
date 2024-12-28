@@ -7,7 +7,7 @@
 #include "..\02-MCAL\05-AFIO\AFIO_interface.h"
 #include "..\02-MCAL\06-SYSTICK\SYSTICK_interface.h"
 
-
+void blink_led_callback(void);
 int main(void)
 {
     RCC_Init();
@@ -20,21 +20,29 @@ int main(void)
     GPIO_voidInitPinMode(GPIO_PORTC,GPIO_PIN13,GP_OUT_PUSH_PULL_2MHZ);
     
     //Initializes the SysTick timer and start counting
-    SYSTICK_voidInitTick(); 
+    SYSTICK_voidInit(); 
     
-
+    
     // NVIC_voidInit();   
     // NVIC_voidSetInterruptPriority(EXTI0_INT,1,1);
     // NVIC_voidSetInterruptPriority(EXTI1_INT,0,0);
 
+    SYSTICK_voidSetAppTick(1000);//delay for 1000ms
+    u32 last_reading=SYSTICK_u32GetMillis();
     while(1)
     {   
-        GPIO_voidWritePin(GPIO_PORTB, GPIO_PIN14, GPIO_PIN_SET);
-        SYSTICK_voidBlockingDelay(1000);//delay for 1000ms
-        GPIO_voidWritePin(GPIO_PORTB, GPIO_PIN14, GPIO_PIN_RESET);
-        SYSTICK_voidBlockingDelay(1000);//delay for 1000ms
+        if(SYSTICK_u32GetMillis()-last_reading>=1000)
+        {
+            GPIO_voidTogglePin(GPIO_PORTB, GPIO_PIN14);
+            last_reading=SYSTICK_u32GetMillis();
+        }
     }
     return 0;
+}
+
+void blink_led_callback(void)
+{
+    GPIO_voidTogglePin(GPIO_PORTB, GPIO_PIN14);
 }
 
 // void EXTI0_IRQHandler()

@@ -72,6 +72,8 @@ typedef enum
 
 void GPIO_voidInitPinMode(GPIO_PORTS_enu Copy_u8Port, GPIO_PINS_enu Copy_u8Pin ,GPIO_PIN_MODE_enu Copy_u8PinMode);
 void GPIO_voidWritePin(GPIO_PORTS_enu Copy_u8Port, GPIO_PINS_enu Copy_u8Pin ,GPIO_PIN_STATE_enu Copy_u8PinState);
+void GPIO_voidTogglePin(GPIO_PORTS_enu Copy_u8Port, GPIO_PINS_enu Copy_u8Pin);
+
 u8 GPIO_u8ReadPinValue(GPIO_PORTS_enu Copy_u8Port, GPIO_PINS_enu Copy_u8Pin);
 
 /*Parameters :

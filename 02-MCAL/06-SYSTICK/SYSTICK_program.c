@@ -9,11 +9,11 @@
 #include "SYSTICK_interface.h"
 #include "SYSTICK_private.h"
 #include "SYSTICK_config.h"
+#include "..\02-GPIO\GPIO_interface.h"
 
-
-static volatile u32 TickCount;
-static SYSTICK_MODES_enu SysTick_Current_Mode;
-void (*SYSTICK_CallBack)(void);
+static volatile u32 TickCount=0;
+static SYSTICK_MODES_enu SysTick_Current_Mode=NOT_RUNNING;
+void (*SYSTICK_CallBack)(void)=NULL;
 
 /*
  * @brief Initializes the SysTick timer.
@@ -21,7 +21,15 @@ void (*SYSTICK_CallBack)(void);
  */
 u32 SYSTICK_u32GetMillis(void)
 {
-    return TickCount;
+    if(SysTick_Current_Mode==APP_TIME_FUNC)
+    {    return TickCount;
+    }
+    else
+    {
+        //TODO:return error code
+        return 0;
+    }
+        
 }
 
 /*
@@ -29,58 +37,54 @@ u32 SYSTICK_u32GetMillis(void)
     Disable Systick Interrupt
     Disable Systick
  */
-void SYSTICK_voidInitTick(void)
+void SYSTICK_voidInit(void)
 {
     //Reset the Control Reg 
-    SYSTICK_PTR->STK_CTRL=0;
     #if SYSTICK_INPUT_CLOCK==SYS_TICK_AHB
-    SET_BIT(SYSTICK_PTR->STK_CTRL,CLKSOURCE_BIT_POS);
+    /* Disable Systick - Disable Systick Interrupt - Set clock source AHB */
+	SYSTICK_PTR -> CTRL = 0x00000004;
     #elif SYSTICK_INPUT_CLOCK==SYS_TICK_AHB_DIV_8
-    CLEAR_BIT(SYSTICK_PTR->STK_CTRL,CLKSOURCE_BIT_POS);
+    /* Disable Systick - Disable Systick Interrupt - Set clock source AHB/8 */
+    SYSTICK_PTR->CTRL=0;
     #else
     #error "Wrong SYSTICK_INPUT_CLOCK choice"
     #endif
-    SYSTICK_PTR->STK_VAL=0;
-    SYSTICK_PTR->STK_LOAD=0;
-
-    //Disable the interrupt in the control reg and  Disable the Timer 
-    CLEAR_BIT(SYSTICK_PTR->STK_CTRL,TICKINT_BIT_POS);
-    CLEAR_BIT(SYSTICK_PTR->STK_CTRL,ENABLE_BIT_POS);
+    SYSTICK_PTR->VAL=0;
+    SYSTICK_PTR->LOAD=0;
      
 }
     
  
 /*
- * @brief Enables the SysTick interrupt.
+ * @brief Enables the SysTick.
  */
 void SYSTICK_voidResumeTick(void)
 {
-     SYSTICK_PTR->STK_CTRL|=(1<<ENABLE_BIT_POS);
+    SET_BIT(SYSTICK_PTR->CTRL,ENABLE_BIT_POS);  //Start the Timer
 }
 
  
 /*
- * @brief Disables the SysTick interrupt.
+ * @brief Disables the SysTick.
  */
 void SYSTICK_voidSuspendTick(void)
 {
-    SYSTICK_PTR->STK_CTRL&=~(1<<ENABLE_BIT_POS);
+    CLEAR_BIT(SYSTICK_PTR->CTRL,ENABLE_BIT_POS); //Stop the Timer
 }
 
 
-/*
-* @brief This function is called to increment  a global variable "TickCount"
-*        used as application time base.
-* @note In the implementation, this variable is incremented each 1ms;
-*/
+// System timer ISR Handler
 void SysTick_Handler(void)
 {
     switch (SysTick_Current_Mode)
     {
-
         case ONE_SHOT_INTERVAL_FUNC:
-            SYSTICK_PTR->STK_VAL=0;         //Stop the timer
-            SYSTICK_PTR->STK_LOAD=0;
+            /*Stop the timer*/
+            SYSTICK_PTR->VAL=0;       
+            CLEAR_BIT(SYSTICK_PTR->CTRL,ENABLE_BIT_POS);
+            //Change the systick mode to not running 
+            SysTick_Current_Mode=NOT_RUNNING; 
+            //Jumb to CallBack Function 
             if(SYSTICK_CallBack!=NULL)
                 SYSTICK_CallBack();
         break;
@@ -92,7 +96,8 @@ void SysTick_Handler(void)
             TickCount++;   
         break;
         default:
-            //TODO:Handle Error 
+            //TODO:Handle Error
+            return;
         break;
     }
     
@@ -105,28 +110,62 @@ void SysTick_Handler(void)
 void SYSTICK_voidBlockingDelay(u32 Copy_u32Ticks)
 {
     //Disable the interrupt in the control reg
-    CLEAR_BIT(SYSTICK_PTR->STK_CTRL,TICKINT_BIT_POS);
-    SYSTICK_PTR->STK_LOAD=Copy_u32Ticks;
-    while(!GET_BIT(SYSTICK_PTR->STK_CTRL,COUNTFLAG_BIT_POS)); //Wait until the Flag Is Set to 1 , indicating that the timer counted to 0
-    SYSTICK_PTR->STK_VAL=0;     //Stop the timer
+    CLEAR_BIT(SYSTICK_PTR->CTRL,TICKINT_BIT_POS);
+    SYSTICK_PTR->LOAD=Copy_u32Ticks;
+    SET_BIT(SYSTICK_PTR->CTRL,ENABLE_BIT_POS);  //Start the Timer
+    while((GET_BIT(SYSTICK_PTR->CTRL,COUNTFLAG_BIT_POS))==0); //Wait until the Flag Is Set to 1 , indicating that the timer counted to 0
+    //Stop the timer
+    CLEAR_BIT(SYSTICK_PTR->CTRL,ENABLE_BIT_POS);//stop the timer
+    SYSTICK_PTR->VAL=0;     
+    SYSTICK_PTR->LOAD=0;     
+
 }
 
-void SYSTICK_SetIntervalSingle(u32 Copy_u32Ticks ,void (*Copy_Func_Ptr)(void))
+/*
+ * @brief Sets a single interval for the SysTick timer.
+ */
+void SYSTICK_voidSetIntervalSingle(u32 Copy_u32Ticks ,void (*Copy_Func_Ptr)(void))
 {
-    SYSTICK_PTR->STK_LOAD=Copy_u32Ticks;    //Generate a single interrupt after the passed number of ticks
+    SYSTICK_PTR->LOAD=Copy_u32Ticks;    //Generate a single interrupt after the passed number of ticks
     SysTick_Current_Mode=ONE_SHOT_INTERVAL_FUNC;    //Select the Current Mode as Single Interval
     SYSTICK_CallBack=Copy_Func_Ptr;  //Set the global call back 
-    //Enable the interrupt in the control reg and  Start the Timer 
-    SET_BIT(SYSTICK_PTR->STK_CTRL,TICKINT_BIT_POS);
-    SET_BIT(SYSTICK_PTR->STK_CTRL,ENABLE_BIT_POS);
+    //Enable the interrupt in the control reg and  Start the Timer
+    SYSTICK_PTR->CTRL|=(1<<TICKINT_BIT_POS) | (1<<ENABLE_BIT_POS);
 }
-void SYSTICK_SetIntervalPeriodic(u32 Copy_u32Ticks ,void (*Copy_Func_Ptr)(void))
+
+
+/*
+ * @brief Sets a periodic interval for the SysTick timer.
+ */
+void SYSTICK_voidSetIntervalPeriodic(u32 Copy_u32Ticks ,void (*Copy_Func_Ptr)(void))
 {
-    SYSTICK_PTR->STK_LOAD=Copy_u32Ticks-1;   //Generate a Periodic interrupt.
+    SYSTICK_PTR->LOAD=Copy_u32Ticks-1;   //Generate a Periodic interrupt.
     SysTick_Current_Mode=PERIODIC_INTERVAL_FUNC;    //Select the Current Mode as Periodic Interval
     SYSTICK_CallBack=Copy_Func_Ptr; //Set the global call back
     //Enable the interrupt in the control reg and  Start the Timer 
-    SET_BIT(SYSTICK_PTR->STK_CTRL,TICKINT_BIT_POS);
-    SET_BIT(SYSTICK_PTR->STK_CTRL,ENABLE_BIT_POS);
+    SYSTICK_PTR->CTRL|=(1<<TICKINT_BIT_POS) | (1<<ENABLE_BIT_POS);
+}
+
+/*
+ * @brief Sets the application tick interval for the SysTick timer.
+ */
+void SYSTICK_voidSetAppTick(u32 Copy_u32Ticks)
+{
+    SYSTICK_PTR->LOAD=Copy_u32Ticks-1;     //Generate a Periodic interrupt.
+    SysTick_Current_Mode=APP_TIME_FUNC;    //Select the Current Mode as App Counter Tick 
+    //Enable the interrupt in the control reg and  Start the Timer 
+    SYSTICK_PTR->CTRL|=(1<<TICKINT_BIT_POS) | (1<<ENABLE_BIT_POS);
+}
+
+
+u32 SYSTICK_u32GetElapsedTime()
+{
+    return (SYSTICK_PTR->LOAD-SYSTICK_PTR->VAL);
+}
+
+
+u32 SYSTICK_u32GetRemainingTime()
+{
+    return (SYSTICK_PTR->VAL);
 }
 
