@@ -28,5 +28,7 @@ typedef struct
 /* EXTI is a pointer to EXTI_REGS structure with a base address of EXTI*/
 #define EXTI_PTR                      ((volatile EXTI_REGS*)(EXTI_BASE_ADDR))
 
+#define MAX_PIN_NUMBER   15
+#define NUMBER_OF_EXTI_LINES  16
 
 #endif

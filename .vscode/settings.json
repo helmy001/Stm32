@@ -72,7 +72,9 @@
     "systick_interface.h": "c",
     "systick_private.h": "c",
     "systick_config.h": "c",
-    "type_traits": "c"
+    "type_traits": "c",
+    "afio_config.h": "c",
+    "afio_private.h": "c"
   },
   "CodeGPT.apiKey": "CodeGPT Plus Beta"
 }

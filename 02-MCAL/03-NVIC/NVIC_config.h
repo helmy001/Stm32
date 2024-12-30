@@ -14,7 +14,7 @@
 *    G2_S8         //2 Group Priorities    - 8 Sub Priorities 
 *    G0_S16        //None Group Priorities - 16 Sub Priorities 
 */
-#define PRIORITY_GROUPING_MODE G0_S16
+#define PRIORITY_GROUPING_MODE G16_S0
 
 
 #endif

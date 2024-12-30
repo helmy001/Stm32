@@ -35,11 +35,11 @@ void TAMPER_IRQHandler         	   (void) __attribute__((alias ("Default_Handler
 void RTC_IRQHandler            	   (void) __attribute__((alias ("Default_Handler")));
 void FLASH_IRQHandler          	   (void) __attribute__((alias ("Default_Handler")));
 void RCC_IRQHandler            	   (void) __attribute__((alias ("Default_Handler")));
-void __attribute__((weak)) EXTI0_IRQHandler (void);
-void __attribute__((weak)) EXTI1_IRQHandler (void);
-void EXTI2_IRQHandler          	   (void) __attribute__((alias ("Default_Handler")));
-void EXTI3_IRQHandler          	   (void) __attribute__((alias ("Default_Handler")));
-void EXTI4_IRQHandler          	   (void) __attribute__((alias ("Default_Handler")));
+void __attribute__((weak)) EXTI0_IRQHandler (void) __attribute__((alias ("Default_Handler")));
+void __attribute__((weak)) EXTI1_IRQHandler (void) __attribute__((alias ("Default_Handler")));
+void __attribute__((weak)) EXTI2_IRQHandler (void) __attribute__((alias ("Default_Handler")));
+void __attribute__((weak)) EXTI3_IRQHandler (void) __attribute__((alias ("Default_Handler")));
+void __attribute__((weak)) EXTI4_IRQHandler (void) __attribute__((alias ("Default_Handler")));
 void DMA1_Channel1_IRQHandler  	   (void) __attribute__((alias ("Default_Handler")));
 void DMA1_Channel2_IRQHandler  	   (void) __attribute__((alias ("Default_Handler")));
 void DMA1_Channel3_IRQHandler  	   (void) __attribute__((alias ("Default_Handler")));
@@ -52,7 +52,7 @@ void USB_HP_CAN_TX_IRQHandler  	   (void) __attribute__((alias ("Default_Handler
 void USB_LP_CAN_RX0_IRQHandler 	   (void) __attribute__((alias ("Default_Handler")));
 void CAN_RX1_IRQHandler        	   (void) __attribute__((alias ("Default_Handler")));
 void CAN_SCE_IRQHandler        	   (void) __attribute__((alias ("Default_Handler")));
-void EXTI9_5_IRQHandler        	   (void) __attribute__((alias ("Default_Handler")));
+void  __attribute__((weak)) EXTI9_5_IRQHandler (void) __attribute__((alias ("Default_Handler")));
 void TIM1_BRK_IRQHandler       	   (void) __attribute__((alias ("Default_Handler")));
 void TIM1_UP_IRQHandler        	   (void) __attribute__((alias ("Default_Handler")));
 void TIM1_TRG_COM_IRQHandler   	   (void) __attribute__((alias ("Default_Handler")));
@@ -69,7 +69,7 @@ void SPI2_IRQHandler           	   (void) __attribute__((alias ("Default_Handler
 void USART1_IRQHandler         	   (void) __attribute__((alias ("Default_Handler")));
 void USART2_IRQHandler         	   (void) __attribute__((alias ("Default_Handler")));
 void USART3_IRQHandler         	   (void) __attribute__((alias ("Default_Handler")));
-void EXTI15_10_IRQHandler      	   (void) __attribute__((alias ("Default_Handler")));
+void  __attribute__((weak)) EXTI15_10_IRQHandler(void) __attribute__((alias ("Default_Handler")));
 void RTCAlarm_IRQHandler       	   (void) __attribute__((alias ("Default_Handler")));
 void TIM8_BRK_IRQHandler       	   (void) __attribute__((alias ("Default_Handler")));
 void TIM8_UP_IRQHandler        	   (void) __attribute__((alias ("Default_Handler")));

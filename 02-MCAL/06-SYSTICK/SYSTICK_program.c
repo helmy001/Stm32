@@ -9,7 +9,7 @@
 #include "SYSTICK_interface.h"
 #include "SYSTICK_private.h"
 #include "SYSTICK_config.h"
-#include "..\02-GPIO\GPIO_interface.h"
+
 
 static volatile u32 TickCount=0;
 static SYSTICK_MODES_enu SysTick_Current_Mode=NOT_RUNNING;

@@ -25,4 +25,9 @@ typedef struct
 
 
 #define AFIO_PTR        ((volatile AFIO_REGS*)AFIO_BASE_ADDR)
+
+
+#define MAX_PIN_NUMBER   15
+#define MAX_PORT_NUMBER  2
+
 #endif

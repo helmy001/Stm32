@@ -9,8 +9,6 @@
 #include "AFIO_private.h"
 #include "AFIO_config.h"
 
-#define MAX_PIN_NUMBER   15
-#define MAX_PORT_NUMBER  2
 
 
 /*
