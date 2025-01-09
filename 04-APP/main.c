@@ -6,9 +6,13 @@
 #include "..\02-MCAL\04-EXTI\EXTI_interface.h"
 #include "..\02-MCAL\05-AFIO\AFIO_interface.h"
 #include "..\02-MCAL\06-SYSTICK\SYSTICK_interface.h"
+#include "..\03-HAL\01-LEDMRX\LEDMRX_interface.h"
+#include "..\03-HAL\02-IR_RECEIVER\IR_interface.h"
+
 
 void blink_led_callback(void);
 void Check_Button();
+u8 led_arr[]={0, 0, 84, 84, 84, 84, 0, 0};
 
 int main(void)
 {
@@ -19,21 +23,32 @@ int main(void)
     RCC_voidPeripheralClockEnable(APB2_PERIPHERAL_BUS,RCC_APB2_IOPCEN);
     RCC_voidPeripheralClockEnable(APB2_PERIPHERAL_BUS,RCC_APB2_AFIOEN);
     
-    GPIO_voidInitPinMode(GPIO_PORTB,GPIO_PIN0,INPUT_PULL_DOWN);
-    GPIO_voidInitPinMode(GPIO_PORTC,GPIO_PIN13,GP_OUT_PUSH_PULL_2MHZ);
+    // GPIO_voidInitPinMode(GPIO_PORTB,GPIO_PIN0,INPUT_PULL_DOWN);
+    // GPIO_voidInitPinMode(GPIO_PORTB,GPIO_PIN14,GP_OUT_PUSH_PULL_2MHZ);
+    GPIO_voidInitHalfPort(GPIO_PORTA,GP_OUT_PUSH_PULL_2MHZ,0);
     
     //Initializes the SysTick timer 
     SYSTICK_voidInit(); 
     
     NVIC_voidInit();   
-    NVIC_voidSetInterruptPriority(EXTI15_10_INT,0,0);
-    NVIC_voidEnableInterrupt(EXTI15_10_INT);
+    NVIC_voidSetInterruptPriority(EXTI0_INT,0,0);
+    NVIC_voidEnableInterrupt(EXTI0_INT);
 
-    EXTI_voidInit(GPIO_PORTB,GPIO_PIN14,EXTI_ON_CHANGE);
-    EXTI_voidEnableEXTI(GPIO_PIN14,blink_led_callback);
+    IR_voidInit();
+
+    //EXTI_voidInit(GPIO_PORTB,GPIO_PIN0,EXTI_RISING_EDGE);
+    // EXTI_voidEnableEXTI(GPIO_PIN0,blink_led_callback);
     //SYSTICK_voidSetAppTick(1000);//Set Application Time Based for 1ms
     while(1)
     {   
+        
+        //IR_u8BlockingReceive();
+        //GPIO_voidByteWrite(GPIO_PORTA,0,0x55);
+        //GPIO_voidByteWrite(GPIO_PORTA,0,IR_u8BlockingReceive());
+
+        //Check_Button();
+        //EXTI_voidSWTrigger(GPIO_PIN0);
+        //show_letter(led_arr);
 
     }
     return 0;
@@ -46,7 +61,7 @@ void Check_Button()
     if(SYSTICK_u32GetMillis()-last_reading>=50)
     {
         last_reading=SYSTICK_u32GetMillis();
-        if(GPIO_u8ReadPinValue(GPIO_PORTB,GPIO_PIN14)==HIGH && LONG_PRESS_FLAG==0)
+        if(GPIO_u8ReadPinValue(GPIO_PORTB,GPIO_PIN14)==HIGH &&LONG_PRESS_FLAG==0)
         {
             GPIO_voidTogglePin(GPIO_PORTC, GPIO_PIN13);
             LONG_PRESS_FLAG=1;
@@ -59,7 +74,7 @@ void Check_Button()
 
 void blink_led_callback(void)
 {
-    GPIO_voidTogglePin(GPIO_PORTC, GPIO_PIN13);
+    GPIO_voidTogglePin(GPIO_PORTB, GPIO_PIN14);
 }
 
 // void EXTI0_IRQHandler()
