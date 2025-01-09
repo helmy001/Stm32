@@ -51,7 +51,6 @@ void SYSTICK_voidInit(void)
     #endif
     SYSTICK_PTR->VAL=0;
     SYSTICK_PTR->LOAD=0;
-     
 }
     
  
@@ -80,8 +79,8 @@ void SysTick_Handler(void)
     {
         case ONE_SHOT_INTERVAL_FUNC:
             /*Stop the timer*/
-            SYSTICK_PTR->VAL=0;       
             CLEAR_BIT(SYSTICK_PTR->CTRL,ENABLE_BIT_POS);
+            SYSTICK_PTR->VAL=0;       
             //Change the systick mode to not running 
             SysTick_Current_Mode=NOT_RUNNING; 
             //Jumb to CallBack Function 
@@ -126,6 +125,8 @@ void SYSTICK_voidBlockingDelay(u32 Copy_u32Ticks)
  */
 void SYSTICK_voidSetIntervalSingle(u32 Copy_u32Ticks ,void (*Copy_Func_Ptr)(void))
 {
+    CLEAR_BIT(SYSTICK_PTR->CTRL,ENABLE_BIT_POS); //stop the timer
+    SYSTICK_PTR->VAL=0; //Reset the Systick Value Register 
     SYSTICK_PTR->LOAD=Copy_u32Ticks;    //Generate a single interrupt after the passed number of ticks
     SysTick_Current_Mode=ONE_SHOT_INTERVAL_FUNC;    //Select the Current Mode as Single Interval
     SYSTICK_CallBack=Copy_Func_Ptr;  //Set the global call back 
@@ -139,6 +140,8 @@ void SYSTICK_voidSetIntervalSingle(u32 Copy_u32Ticks ,void (*Copy_Func_Ptr)(void
  */
 void SYSTICK_voidSetIntervalPeriodic(u32 Copy_u32Ticks ,void (*Copy_Func_Ptr)(void))
 {
+    CLEAR_BIT(SYSTICK_PTR->CTRL,ENABLE_BIT_POS); //Stop the timer
+    SYSTICK_PTR->VAL=0; //Reset the Systick Value Register 
     SYSTICK_PTR->LOAD=Copy_u32Ticks-1;   //Generate a Periodic interrupt.
     SysTick_Current_Mode=PERIODIC_INTERVAL_FUNC;    //Select the Current Mode as Periodic Interval
     SYSTICK_CallBack=Copy_Func_Ptr; //Set the global call back
@@ -151,6 +154,8 @@ void SYSTICK_voidSetIntervalPeriodic(u32 Copy_u32Ticks ,void (*Copy_Func_Ptr)(vo
  */
 void SYSTICK_voidSetAppTick(u32 Copy_u32Ticks)
 {
+    CLEAR_BIT(SYSTICK_PTR->CTRL,ENABLE_BIT_POS); //Stop the timer
+    SYSTICK_PTR->VAL=0; //Reset the Systick Value Register 
     SYSTICK_PTR->LOAD=Copy_u32Ticks-1;     //Generate a Periodic interrupt.
     SysTick_Current_Mode=APP_TIME_FUNC;    //Select the Current Mode as App Counter Tick 
     //Enable the interrupt in the control reg and  Start the Timer 
@@ -165,7 +170,8 @@ u32 SYSTICK_u32GetElapsedTime()
 
 
 u32 SYSTICK_u32GetRemainingTime()
-{
+{ 
     return (SYSTICK_PTR->VAL);
+
 }
 

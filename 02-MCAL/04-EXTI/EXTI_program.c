@@ -16,7 +16,7 @@ void EXTI_voidInit(u8 Copy_u8Port, u8 Copy_u8Pin,u8 Copy_u8TriggerMode)
 {
     //Disable the exti interrupt mask
     EXTI_voidDisableEXTI(Copy_u8Pin);
-    //TODO: Select the source input for EXTIx external interrupt.in the Alternate Function reg (AFIO_EXTICR1)
+    //TODO: Select the source input for EXTIx external interrupt.in the Alternate Function reg (AFIO_EXTICR1) *REMAPPING PINS*
     AFIO_EXTI_Configuration(Copy_u8Port,Copy_u8Pin);
     //Choose Trigger Mode
     EXTI_voidSetTriggerMode(Copy_u8Pin,Copy_u8TriggerMode);
@@ -82,6 +82,17 @@ void EXTI_voidSWTrigger(u8 Copy_u8Pin)
     {
         //TODO:Handle the error
     }
+}
+
+u8 EXTI_u8GetPendingFlag(u8 Copy_u8Pin)
+{
+    return GET_BIT(EXTI_PTR->PR,Copy_u8Pin);
+}
+
+void EXTI_voidClearPendingFlag(u8 Copy_u8Pin)
+{
+    //Pending bit is cleared by writing a 1 into the bit. 
+    SET_BIT(EXTI_PTR->PR,Copy_u8Pin);
 }
 
 void EXTI0_IRQHandler(void)

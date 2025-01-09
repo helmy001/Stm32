@@ -41,6 +41,9 @@ void EXTI_voidEnableEXTI(u8 Copy_u8Pin,void (*Copy_Func_Ptr)(void));
 void EXTI_voidDisableEXTI(u8 Copy_u8Pin);
 void EXTI_voidSetTriggerMode(u8 Copy_u8Pin,u8 Copy_u8TriggerMode);
 void EXTI_voidSWTrigger(u8 Copy_u8Pin);
+u8   EXTI_u8GetPendingFlag(u8 Copy_u8Pin);
+void EXTI_voidClearPendingFlag(u8 Copy_u8Pin);
+
 
 //TODO: function to read the pending flag 
 //TODO: function to Clear the pending flag 
