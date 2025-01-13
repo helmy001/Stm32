@@ -7,9 +7,20 @@
 #ifndef IR_INTERFACE_H
 #define IR_INTERFACE_H
 
+typedef struct
+{
+    GPIO_PORTS_enu PortNum;
+    GPIO_PINS_enu PinNum;
+    u32* Frame_Bits;
+    void(*Copy_Func_Ptr)(void);
+
+}IR_struct;
+
 /* 1-Initialize the IR GPIO Pin to Floating Input
    2-Attach the IR Gpio pin to External Interrupt with falling edge Mode */
 void IR_voidInit();
+
+void IR_voidDisable();
 
 /* Waits Until Data is received From the Remote*/
 u8 IR_u8BlockingReceive();

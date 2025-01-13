@@ -6,6 +6,7 @@
 #include "..\02-MCAL\04-EXTI\EXTI_interface.h"
 #include "..\02-MCAL\05-AFIO\AFIO_interface.h"
 #include "..\02-MCAL\06-SYSTICK\SYSTICK_interface.h"
+#include "..\02-MCAL\07-UART\UART_interface.h"
 #include "..\03-HAL\01-LEDMRX\LEDMRX_interface.h"
 #include "..\03-HAL\02-IR_RECEIVER\IR_interface.h"
 
@@ -13,6 +14,9 @@
 void blink_led_callback(void);
 void Check_Button();
 u8 led_arr[]={0, 0, 84, 84, 84, 84, 0, 0};
+
+USART_Config uart_inst;
+
 
 int main(void)
 {
@@ -22,37 +26,53 @@ int main(void)
     RCC_voidPeripheralClockEnable(APB2_PERIPHERAL_BUS,RCC_APB2_IOPBEN);
     RCC_voidPeripheralClockEnable(APB2_PERIPHERAL_BUS,RCC_APB2_IOPCEN);
     RCC_voidPeripheralClockEnable(APB2_PERIPHERAL_BUS,RCC_APB2_AFIOEN);
+    RCC_voidPeripheralClockEnable(APB2_PERIPHERAL_BUS,RCC_APB2_USART1EN);
     
-    // GPIO_voidInitPinMode(GPIO_PORTB,GPIO_PIN0,INPUT_PULL_DOWN);
-    // GPIO_voidInitPinMode(GPIO_PORTB,GPIO_PIN14,GP_OUT_PUSH_PULL_2MHZ);
-    GPIO_voidInitHalfPort(GPIO_PORTA,GP_OUT_PUSH_PULL_2MHZ,0);
+    //GPIO_voidInitPinMode(GPIO_PORTB,GPIO_PIN0,INPUT_PULL_DOWN);
+    //  GPIO_voidInitPinMode(GPIO_PORTB,GPIO_PIN14,GP_OUT_PUSH_PULL_2MHZ);
+
+    GPIO_voidInitPinMode(GPIO_PORTA,GPIO_PIN9,AF_OUT_PUSH_PULL_50MHZ);
+    GPIO_voidInitPinMode(GPIO_PORTA,GPIO_PIN10,INPUT_FLOATING);
+
+
     
     //Initializes the SysTick timer 
     SYSTICK_voidInit(); 
     
     NVIC_voidInit();   
     NVIC_voidSetInterruptPriority(EXTI0_INT,0,0);
-    NVIC_voidEnableInterrupt(EXTI0_INT);
+    //NVIC_voidEnableInterrupt(EXTI0_INT);
 
     IR_voidInit();
 
+    uart_inst.Uart_t=USART1;
+    uart_inst.BaudRate=115200;
+    uart_inst.StopBits=UART_STOPBITS_1;
+    uart_inst.Parity=UART_PARITY_NONE;
+    uart_inst.Mode=UART_MODE_TX_RX;
+    uart_inst.WordLength=UART_WORDLENGTH_8B;
+    UART_Init(&uart_inst);
+    char dataArr[]="This is Test message for STM23\r\n";
+    char *Datastring="helmy World";
+    
     //EXTI_voidInit(GPIO_PORTB,GPIO_PIN0,EXTI_RISING_EDGE);
-    // EXTI_voidEnableEXTI(GPIO_PIN0,blink_led_callback);
+    //EXTI_voidEnableEXTI(GPIO_PIN0,blink_led_callback);
     //SYSTICK_voidSetAppTick(1000);//Set Application Time Based for 1ms
     while(1)
     {   
-        
-        //IR_u8BlockingReceive();
-        //GPIO_voidByteWrite(GPIO_PORTA,0,0x55);
-        //GPIO_voidByteWrite(GPIO_PORTA,0,IR_u8BlockingReceive());
+        // UART_Transmit(&uart_inst,(u8*)dataArr,sizeof(dataArr));
 
-        //Check_Button();
-        //EXTI_voidSWTrigger(GPIO_PIN0);
-        //show_letter(led_arr);
+        // UART_Transmit(&uart_inst,(u8*)Datastring,11);
+        // UART_TransmitNumber(&uart_inst,00);
+        // SYSTICK_voidBlockingDelay(1000000);
+        
+        UART_TransmitNumber(&uart_inst,IR_u8BlockingReceive());
+        UART_Transmit(&uart_inst,(u8*)"Ir Code Received\r\n",18);
 
     }
     return 0;
 }
+
 
 void Check_Button()
 {

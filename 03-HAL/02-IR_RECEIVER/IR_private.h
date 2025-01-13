@@ -7,14 +7,14 @@
 #ifndef IR_PRIVATE_H
 #define IR_PRIVATE_H
 
-#define IR_LowInput_MinRange   1000 //1000 uSec
-#define IR_LowInput_MaxRange   1300 //1300 uSec
+#define IR_LowInput_MinRange   10 //1000 uSec
+#define IR_LowInput_MaxRange   13 //1300 uSec
 
-#define IR_HighInput_MinRange   2000 //2000 uSec
-#define IR_HighInput_MaxRange   2300 //2300 uSec
+#define IR_HighInput_MinRange   20 //2000 uSec
+#define IR_HighInput_MaxRange   23 //2300 uSec
 
-#define IR_StartBit_MinRange   12000 //12000 uSec
-#define IR_StartBit_MaxRange   14000 //14000 uSec
+#define IR_StartBit_MinRange   120 //12000 uSec
+#define IR_StartBit_MaxRange   140 //14000 uSec
 
 
 #define HIGH_PRECISION      100 //100uSec for Systick App Tick  

@@ -43,8 +43,9 @@ TARGET = app_program.elf
 # Main Build Targets
 # -------------------------------
 
-# Default Target: Build everything
-all: $(TARGET)
+# Default Target: Clean Build Dir and Build everything
+all: clean $(TARGET)
+	arm-none-eabi-objcopy -O ihex .\app_program.elf output.hex
 
 
 # #Link all object files into the executable
@@ -90,7 +91,6 @@ $(BUILD_DIR)/%.o: $(STARTUP)/StartUpCode.c
 # Run the program after building
 run: all
 	@echo "Running the program..."
-	./$(TARGET)
 
 # Clean up all build artifacts
 clean:

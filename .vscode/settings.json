@@ -76,7 +76,8 @@
     "afio_config.h": "c",
     "afio_private.h": "c",
     "exti_interface.h": "c",
-    "ledmrx_interface.h": "c"
+    "ledmrx_interface.h": "c",
+    "uart_interface.h": "c"
   },
   "CodeGPT.apiKey": "CodeGPT Plus Beta"
 }

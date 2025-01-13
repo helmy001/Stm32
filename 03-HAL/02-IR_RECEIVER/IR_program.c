@@ -4,10 +4,16 @@
 #include "..\..\02-MCAL\02-GPIO\GPIO_interface.h"
 #include "..\..\02-MCAL\04-EXTI\EXTI_interface.h"
 #include "..\..\02-MCAL\06-SYSTICK\SYSTICK_interface.h"
+#include "..\..\02-MCAL\07-UART\UART_interface.h"
 
 #include "IR_interface.h"
 #include "IR_private.h"
 #include "IR_config.h"
+
+
+extern USART_Config uart_inst;
+
+
 
 void Frame_Bit_Deteceted();
 
@@ -25,8 +31,8 @@ void IR_voidInit()
     SYSTICK_voidInit();
 
     /////////////////////////////////////
-    //Enable the Exti interrupt with No Call Back Function
-    EXTI_voidEnableEXTI(IR_GPIO_PIN,Frame_Bit_Deteceted);
+    //Enable the Exti interrupt with  Call Back Function
+    //EXTI_voidEnableEXTI(IR_GPIO_PIN,Frame_Bit_Deteceted);
 }
 
 //Disable the External Interrupt For the IR Pin
@@ -45,6 +51,7 @@ u8 IR_u8BlockingReceive()
     volatile u32 Frame_Bits=0;
     volatile u8 Frame_Bits_Counter=0;
     volatile u32 Prev_Time=0,Current_Time=0;
+    UART_Transmit(&uart_inst,(u8*)"Starting Ir Blocking Function\r\n",34);
 
     //Start System timer In AppTick Mode every { 100us(HIGH) , 200us(MEDIUM) ,350us(LOW)} Depends on ConfigFile 
     SYSTICK_voidSetAppTick(IR_DECODING_PRECISION);
@@ -55,7 +62,12 @@ u8 IR_u8BlockingReceive()
     while(Frame_Bits_Counter<33)
     {
         //Wait Until Falling Edge On the IR Pin is Detected
-        while(EXTI_u8GetPendingFlag(IR_GPIO_PIN)==0);
+        while(EXTI_u8GetPendingFlag(IR_GPIO_PIN)==0)
+        {
+            UART_Transmit(&uart_inst,(u8*)"Waiting\r\n",9);
+        }
+        EXTI_voidClearPendingFlag(IR_GPIO_PIN);
+        UART_Transmit(&uart_inst,(u8*)"Falling Edge Detected\r\n",23);
 
         Current_Time=SYSTICK_u32GetMillis();
 
@@ -108,6 +120,9 @@ u8 IR_u8BlockingReceive()
     //Disable the external interrupt
     EXTI_voidDisableEXTI(IR_GPIO_PIN);
     // Return decoded data (8 data bits starting at bit 16)
+    
+    UART_TransmitNumber(&uart_inst,Frame_Bits);
+
     return (u8)((Frame_Bits>>16)&0xFF);
 }
 
