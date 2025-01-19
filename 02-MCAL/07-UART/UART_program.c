@@ -74,17 +74,28 @@ void UART_Transmit(USART_Config *Uartx,u8 *Data,u8 Size)
 
 void UART_TransmitNumber(USART_Config *Uartx,u32 Data)
 {
+    
     if(Data==0)
     {
-         USART_PTR[Uartx->Uart_t]->DR='0';
+        USART_PTR[Uartx->Uart_t]->DR='0';
+        while(GET_BIT((USART_PTR[Uartx->Uart_t]->SR),TRANSMIT_DONE_FLAG_POS)==0);
+        return;
+
     }
-    else
+    char buffer[12]; // max 10 digits + sign 
+    int i=0;
+    // Store digits in reverse order
+    while(Data!=0)
     {
-        while(Data!=0)
-        {
-            USART_PTR[Uartx->Uart_t]->DR=(Data%10)+'0';
-            while(GET_BIT((USART_PTR[Uartx->Uart_t]->SR),TRANSMIT_DONE_FLAG_POS)==0);
-            Data/=10;
-        }
+        buffer[i]=(Data%10) +'0';
+        Data/=10;
+        i++;
     }
+    // Transmit digits in correct order
+    while(i--)
+    {
+        USART_PTR[Uartx->Uart_t]->DR=buffer[i];
+        while(GET_BIT((USART_PTR[Uartx->Uart_t]->SR),TRANSMIT_DONE_FLAG_POS)==0);
+    }
+    
 }

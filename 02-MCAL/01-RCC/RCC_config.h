@@ -13,7 +13,7 @@
 //  RCC_HSE_CRYSTAL  
 //  RCC_HSI 
 //  RCC_PLL
-#define SYSTEM_CLOCK_TYPE   RCC_HSE_CRYSTAL 
+#define SYSTEM_CLOCK_TYPE   RCC_HSI
 
 
 /* PLL_EN options:

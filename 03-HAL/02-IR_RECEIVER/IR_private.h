@@ -14,7 +14,7 @@
 #define IR_HighInput_MaxRange   23 //2300 uSec
 
 #define IR_StartBit_MinRange   120 //12000 uSec
-#define IR_StartBit_MaxRange   140 //14000 uSec
+#define IR_StartBit_MaxRange   145 //14500 uSec
 
 
 #define HIGH_PRECISION      100 //100uSec for Systick App Tick  

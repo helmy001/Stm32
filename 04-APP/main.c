@@ -63,11 +63,11 @@ int main(void)
         // UART_Transmit(&uart_inst,(u8*)dataArr,sizeof(dataArr));
 
         // UART_Transmit(&uart_inst,(u8*)Datastring,11);
-        // UART_TransmitNumber(&uart_inst,00);
-        // SYSTICK_voidBlockingDelay(1000000);
+        
         
         UART_TransmitNumber(&uart_inst,IR_u8BlockingReceive());
         UART_Transmit(&uart_inst,(u8*)"Ir Code Received\r\n",18);
+
 
     }
     return 0;

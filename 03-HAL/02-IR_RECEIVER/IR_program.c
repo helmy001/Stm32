@@ -58,37 +58,40 @@ u8 IR_u8BlockingReceive()
     
     //Enable the Exti interrupt with No Call Back Function
     EXTI_voidEnableEXTI(IR_GPIO_PIN,NULL);
-
+    u8 Start_Bit_Flag=0;
     while(Frame_Bits_Counter<33)
     {
         //Wait Until Falling Edge On the IR Pin is Detected
-        while(EXTI_u8GetPendingFlag(IR_GPIO_PIN)==0)
-        {
-            UART_Transmit(&uart_inst,(u8*)"Waiting\r\n",9);
-        }
+        while(EXTI_u8GetPendingFlag(IR_GPIO_PIN)==0);
         EXTI_voidClearPendingFlag(IR_GPIO_PIN);
-        UART_Transmit(&uart_inst,(u8*)"Falling Edge Detected\r\n",23);
-
         Current_Time=SYSTICK_u32GetMillis();
 
         if(Frame_Bits_Counter!=0) //if this is not the First Falling edge
         {
             u32 Elapsed_Time=(Current_Time-Prev_Time);
-            if(Elapsed_Time <= IR_LowInput_MaxRange && Elapsed_Time >= IR_LowInput_MinRange )
+            if (Elapsed_Time <= IR_StartBit_MaxRange && Elapsed_Time >= IR_StartBit_MinRange )
             {
                 //This If is Useless for Now Doesnt affect the program if removed
-                // Logic '0'
-                //CLEAR_BIT(Frame_Bits,Frame_Bits_Counter-1);
-            }else if(Elapsed_Time <= IR_HighInput_MaxRange && Elapsed_Time >= IR_HighInput_MinRange )
+                //Should Detect if Start Bit happend
+                Start_Bit_Flag=1;
+                Frame_Bits_Counter=1;
+                UART_Transmit(&uart_inst,(u8*)"S-Bit-1\r\n",9);
+                //UART_TransmitNumber(&uart_inst,Elapsed_Time);
+            }
+            else if(Elapsed_Time <= IR_HighInput_MaxRange && Elapsed_Time >= IR_HighInput_MinRange &&Start_Bit_Flag==1)
             {
                 //If ir received one set this Bit in the Frame Bits Variable
                 // Logic '1'
                 SET_BIT(Frame_Bits,Frame_Bits_Counter-1);
-            }else if (Elapsed_Time <= IR_StartBit_MaxRange && Elapsed_Time >= IR_StartBit_MinRange )
+            }else if (Elapsed_Time >= IR_StartBit_MaxRange )
             {
-                //This If is Useless for Now Doesnt affect the program if removed
-                //Should Detect if Start Bit happend
+                Start_Bit_Flag=0;
+                Frame_Bits_Counter=0;
+                Frame_Bits=0;
+                UART_Transmit(&uart_inst,(u8*)"S-Bit-0\r\n",9);
+                //UART_TransmitNumber(&uart_inst,Elapsed_Time);
             }
+             
         }    
         Frame_Bits_Counter++;
         Prev_Time=Current_Time;
@@ -121,7 +124,7 @@ u8 IR_u8BlockingReceive()
     EXTI_voidDisableEXTI(IR_GPIO_PIN);
     // Return decoded data (8 data bits starting at bit 16)
     
-    UART_TransmitNumber(&uart_inst,Frame_Bits);
+    //UART_TransmitNumber(&uart_inst,Frame_Bits);
 
     return (u8)((Frame_Bits>>16)&0xFF);
 }
