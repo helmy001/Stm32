@@ -13,90 +13,100 @@
 
 extern USART_Config uart_inst;
 
+// Internal driver variables
+static void (*IR_DataCallback)(u8)=NULL; 
+static volatile IR_State_t IR_State = IR_IDLE_STATE;
+static volatile u32 IR_FrameTimes[IR_MAX_FRAME_SIZE]={0};
+static volatile u8 IR_BitCounter=0;
 
 
-void Frame_Bit_Deteceted();
+// Local function prototypes
+static void IR_EXTI_Handler(void);
+static void IR_TimeOutHandler(void);
+static void IR_DecodeFrame(void);
 
-/* 1-Initialize the IR GPIO Pin to Floating Input
-   2-Attach the IR Gpio pin to External Interrupt with falling edge Mode 
-   3-Start The System Timer Mode In Application Tick Mode every 500 uSec
+/*  
+* Initialize And Enable The IR receiver driver.
 */
-void IR_voidInit()
+void IR_voidInit(void (*Copy_Func_Ptr)(u8))
 {
     //Initialize the IR Pin as Floating Input pin to detect both High and Low Signals
     GPIO_voidInitPinMode(IR_GPIO_PORT,IR_GPIO_PIN,INPUT_FLOATING);
+
+    // Reset State machine
+    IR_State = IR_IDLE_STATE;
+    IR_BitCounter = 0;
+
     //Attach external interrupt to the IR GPIO Pin Selected and Set the Trigger Mode to Falling Edge
     EXTI_voidInit(IR_GPIO_PORT,IR_GPIO_PIN,EXTI_FALLING_EDGE);
+    EXTI_voidEnableEXTI(IR_GPIO_PIN,IR_EXTI_Handler);
+
+    // Set CallBack
+    IR_DataCallback=Copy_Func_Ptr;
+
     //Initialize the System Timer
-    SYSTICK_voidInit();
-
-    /////////////////////////////////////
-    //Enable the Exti interrupt with  Call Back Function
-    //EXTI_voidEnableEXTI(IR_GPIO_PIN,Frame_Bit_Deteceted);
-}
-
-//Disable the External Interrupt For the IR Pin
-void IR_voidDisable()
-{
-    //Disable the External Interrupt
-    EXTI_voidDisableEXTI(IR_GPIO_PIN);
-    //Stop The System Timer
-    SYSTICK_voidSuspendTick();
+    SYSTICK_voidInit();    
 }
 
 
-/* Blocking Function that Waits Until Data is received From the Remote*/
-u8 IR_u8BlockingReceive()
+/**
+ * External Interrupt handler for IR pin.
+ */
+static void IR_EXTI_Handler(void) 
 {
-    volatile u32 Frame_Bits=0;
-    volatile u8 Frame_Bits_Counter=0;
-    volatile u32 Prev_Time=0,Current_Time=0;
-    UART_Transmit(&uart_inst,(u8*)"Starting Ir Blocking Function\r\n",34);
-
-    //Start System timer In AppTick Mode every { 100us(HIGH) , 200us(MEDIUM) ,350us(LOW)} Depends on ConfigFile 
-    SYSTICK_voidSetAppTick(IR_DECODING_PRECISION);
-    
-    //Enable the Exti interrupt with No Call Back Function
-    EXTI_voidEnableEXTI(IR_GPIO_PIN,NULL);
-    u8 Start_Bit_Flag=0;
-    while(Frame_Bits_Counter<33)
+    if(IR_State==IR_IDLE_STATE)
     {
-        //Wait Until Falling Edge On the IR Pin is Detected
-        while(EXTI_u8GetPendingFlag(IR_GPIO_PIN)==0);
-        EXTI_voidClearPendingFlag(IR_GPIO_PIN);
-        Current_Time=SYSTICK_u32GetMillis();
-
-        if(Frame_Bits_Counter!=0) //if this is not the First Falling edge
-        {
-            u32 Elapsed_Time=(Current_Time-Prev_Time);
-            if (Elapsed_Time <= IR_StartBit_MaxRange && Elapsed_Time >= IR_StartBit_MinRange )
-            {
-                //This If is Useless for Now Doesnt affect the program if removed
-                //Should Detect if Start Bit happend
-                Start_Bit_Flag=1;
-                Frame_Bits_Counter=1;
-                UART_Transmit(&uart_inst,(u8*)"S-Bit-1\r\n",9);
-                //UART_TransmitNumber(&uart_inst,Elapsed_Time);
-            }
-            else if(Elapsed_Time <= IR_HighInput_MaxRange && Elapsed_Time >= IR_HighInput_MinRange &&Start_Bit_Flag==1)
-            {
-                //If ir received one set this Bit in the Frame Bits Variable
-                // Logic '1'
-                SET_BIT(Frame_Bits,Frame_Bits_Counter-1);
-            }else if (Elapsed_Time >= IR_StartBit_MaxRange )
-            {
-                Start_Bit_Flag=0;
-                Frame_Bits_Counter=0;
-                Frame_Bits=0;
-                UART_Transmit(&uart_inst,(u8*)"S-Bit-0\r\n",9);
-                //UART_TransmitNumber(&uart_inst,Elapsed_Time);
-            }
-             
-        }    
-        Frame_Bits_Counter++;
-        Prev_Time=Current_Time;
+        IR_State=IR_RECEIVING_STATE;
+        IR_BitCounter=0;
+        SYSTICK_voidSetIntervalSingle(IR_FRAME_TIMEOUT,IR_TimeOutHandler);
     }
+    else if(IR_State==IR_RECEIVING_STATE)
+    {
+        if(IR_BitCounter<IR_MAX_FRAME_SIZE)
+        {
+            IR_FrameTimes[IR_BitCounter++]=SYSTICK_u32GetElapsedTime();
+            SYSTICK_voidSetIntervalSingle(IR_FRAME_TIMEOUT,IR_TimeOutHandler);
+        }else
+        {
+            //Stop The SysTick Timer
+            SYSTICK_voidSuspendTick();
+            // Move to the Decoding state
+            IR_State = IR_DECODING_STATE;
+            IR_DecodeFrame();           // Decode the frame
+            IR_State = IR_IDLE_STATE;    // Reset to idle state
+        }
+    }
+}
 
+static void IR_TimeOutHandler(void)
+{
+    if (IR_State == IR_RECEIVING_STATE && IR_BitCounter==IR_MAX_FRAME_SIZE) 
+    {
+        // Move to the Decoding state
+        IR_State = IR_DECODING_STATE;
+
+        // Decode the frame
+        IR_DecodeFrame();
+
+        // Reset to idle state
+        IR_State = IR_IDLE_STATE;
+    }else
+    {
+        IR_State=IR_IDLE_STATE;
+        IR_BitCounter=0;
+    }
+}
+
+/**
+ * Decode the received IR frame.
+ */
+static void IR_DecodeFrame(void)
+{
+    //Start Bit Check
+    if(IR_FrameTimes[0] > IR_StartBit_MaxRange || IR_FrameTimes[0] < IR_StartBit_MinRange )
+    return;
+
+    u32 DecodedData=0;
 
     #if IR_DATA_AND_ADDRESS_VERIFICATION==ENABLE
         /*
@@ -106,80 +116,60 @@ u8 IR_u8BlockingReceive()
             ----------------------------------------------------------------------------
                                         32-Bits Frame
         */
-       
-       //Address Verification
-       if((Frame_Bits&0x0F)==~((Frame_Bits&0xF0)>>8))
-       {
+
+        // Decode bits from the frame (e.g., using NEC protocol rules)
+        for(u8 i=1;i<IR_MAX_FRAME_SIZE-1;i++)
+        {
+            if(IR_FrameTimes[i] <= IR_HighInput_MaxRange && IR_FrameTimes[i] >= IR_HighInput_MinRange )
+            {
+                //If ir received one set this Bit in the Frame Bits Variable
+                SET_BIT(DecodedData,i-1);
+            }
+        }
+        //Address Verification
+        if((DecodedData&0x0F)==~((DecodedData&0xF0)>>8))
+        {
             //TODO: Should Handle Error in the Address Bits Verfication
-            return 254;
-       }
+            UART_Transmit(&uart_inst,(u8*)"Error Address\r\n",15);
+           // return 254;
+        }
         //Data Verification
-        if((Frame_Bits&0xF00)==~((Frame_Bits&0xF000)>>8))
+        if((DecodedData&0xF00)==~((DecodedData&0xF000)>>8))
         {
             //TODO: Should Handle Error in the Data Bits Verfication
-            return 255;
+            UART_Transmit(&uart_inst,(u8*)"Error Data\r\n",12);
+            //return 255;
+        }
+    #else
+
+        // Decode bits from the frame (e.g., using NEC protocol rules)
+        for(u8 i=0;i<IR_DATA_BITS;i++)
+        {
+            if(IR_FrameTimes[i+17] <= IR_HighInput_MaxRange && IR_FrameTimes[i+17] >= IR_HighInput_MinRange )
+            {
+                //If ir received one set this Bit in the Frame Bits Variable
+                SET_BIT(DecodedData,i+16);
+            }
         }
     #endif
-    //Disable the external interrupt
+
+    // Invoke the callback with the decoded data
+    if (IR_DataCallback != NULL)
+    {
+        //UART_TransmitNumber(&uart_inst,DecodedData);
+        IR_DataCallback((DecodedData>>16)&0x0FF);
+    }
+
+}
+
+
+//Stop the External Interrupt For the IR Pin and Suspend The Timer
+void IR_voidStopReceiving()
+{
+    //Disable the External Interrupt
     EXTI_voidDisableEXTI(IR_GPIO_PIN);
-    // Return decoded data (8 data bits starting at bit 16)
-    
-    //UART_TransmitNumber(&uart_inst,Frame_Bits);
-
-    return (u8)((Frame_Bits>>16)&0xFF);
+    //Stop The System Timer
+    SYSTICK_voidSuspendTick();
+    //Reset state
+    IR_State = IR_IDLE_STATE;
 }
-
-
-/* Non Blocking Function for Receiving Data 
-   Passed Call Back Function will be called once 
-   the Frame is Completed */
-void IR_voidInterruptReceive(void (*Copy_Func_Ptr)(void))
-{
-
-    //Start System timer In AppTick Mode every { 100us(HIGH) , 200us(MEDIUM) ,350us(LOW)} Depends on ConfigFile 
-    SYSTICK_voidSetAppTick(IR_DECODING_PRECISION);
-    //Enable the Exti interrupt with No Call Back Function
-    EXTI_voidEnableEXTI(IR_GPIO_PIN,NULL);
-    //EXTI_voidEnableEXTI(GPIO_PIN0,);
-}
-
- static volatile u32 Frame_Bit_Times[50];
- static volatile u8 first_bit_flag=0;
- static volatile u8 bits_counter=0;
-
-void Take_Action()
-{
-    u8 Data=0;
-    //one second ended 
-    for(int i=0;i<8;i++)
-    {
-
-        if(Frame_Bit_Times[i+17] <= IR_HighInput_MaxRange && Frame_Bit_Times[i+17] >= IR_HighInput_MinRange )
-        {
-            //If ir received one set this Bit in the Frame Bits Variable
-            // Logic '1'
-            SET_BIT(Data,i);
-        }
-    }
-    first_bit_flag=0;
-    bits_counter=0;
-    GPIO_voidByteWrite(GPIO_PORTA,0,Data);
-}
-
-void Frame_Bit_Deteceted()
-{
-
-    if(first_bit_flag==0)
-    {
-        SYSTICK_voidSetIntervalSingle(1000000,Take_Action);
-        first_bit_flag=1;
-        //GPIO_voidByteWrite(GPIO_PORTA,0,0xFF);
-
-    }else
-    {
-        Frame_Bit_Times[bits_counter]=SYSTICK_u32GetElapsedTime();
-        SYSTICK_voidSetIntervalSingle(1000000,Take_Action);
-        bits_counter++;
-    }
-}
-

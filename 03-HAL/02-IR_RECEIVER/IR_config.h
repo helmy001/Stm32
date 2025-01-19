@@ -29,13 +29,8 @@ Options :   GPIO_PIN0 --> GPIO_PIN15  */
         ENABLE 
         DISABLE
 */
-#define IR_DATA_AND_ADDRESS_VERIFICATION DISABLE
+#define IR_DATA_AND_ADDRESS_VERIFICATION ENABLE
 
 
-/* Options: HIGH_PRECISION      //The Most Accurte For Decoding with Minimun Error Range ,BUT has the Highest Systick Isr OverHead every 100usec
-            MEDIUM_PRECISION    //SYSTICK isr every 200us
-            LOW_PRECISION       //Lowest Precision But Lowest Over Head every 350 us   
-*/
-#define IR_DECODING_PRECISION   HIGH_PRECISION  
 
 #endif
