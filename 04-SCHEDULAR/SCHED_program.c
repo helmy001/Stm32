@@ -29,7 +29,7 @@ typedef struct
 {
     u8 ID;                      //Task Id
     task_t Task_Cb;             //Pointer to the Task Function
-    u16 Delay;                  //Delay before execution
+    int Delay;                  //Delay before execution
     u16 Period;                 //Interval Betweeen SubSequent Runs
     Task_States_t Task_State;   //Status of the Task
 }Task_Control_Block;
@@ -76,10 +76,10 @@ static void SCHED_voidDispatcher(void)
     {
         if(Tasks[i].Task_State==READY_STATE)
         {
-            if(Tasks[i].Delay==0)
+            if(Tasks[i].Delay<=0)
             {
                 Tasks[i].Task_State=RUNNING_STATE;
-                Tasks[i].Delay=Tasks[i].Period-1;
+                Tasks[i].Delay=Tasks[i].Period-SCHED_TICK_MS;
                 (*Tasks[i].Task_Cb)();
                 Tasks[i].Task_State=READY_STATE;
             }else
@@ -90,7 +90,7 @@ static void SCHED_voidDispatcher(void)
         
     }
 }
-
+ 
 void SCHED_voidAddTask(u8 id,task_t taskFunc,u16 period,u16 Initial_Delay)
 {
      for(u8 i=0;i<MAX_NUM_OF_TASKS;i++)

@@ -8,6 +8,6 @@
 #define SCHED_CONFIG_H
 
 #define MAX_NUM_OF_TASKS 3
-#define SCHED_TICK_MS 1 
+#define SCHED_TICK_MS 1
 
 #endif

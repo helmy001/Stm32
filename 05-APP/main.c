@@ -13,11 +13,6 @@
 #include "..\04-SCHEDULAR\SCHED_interface.h"
 
 
-void LED_TASK1(void){}
-void LED_TASK2(void){}
-void LED_TASK3(void){}
-
-
 void blink_led_callback(void);
 void Check_Button();
 u8 led_arr[]={0, 0, 84, 84, 84, 84, 0, 0};
@@ -25,6 +20,25 @@ u8 led_arr[]={0, 0, 84, 84, 84, 84, 0, 0};
 USART_Config uart_inst;
 void IR_Data(u8 data);
 
+
+void Blink_t1()
+{
+    GPIO_voidTogglePin(GPIO_PORTA,GPIO_PIN0);
+    UART_Transmit(&uart_inst,(u8*)"Task1\r\n",7);
+
+}
+void Blink_t2()
+{
+    GPIO_voidTogglePin(GPIO_PORTA,GPIO_PIN1);
+    UART_Transmit(&uart_inst,(u8*)"Task2\r\n",7);
+
+}
+void Blink_t3()
+{
+    GPIO_voidTogglePin(GPIO_PORTA,GPIO_PIN2);
+    UART_Transmit(&uart_inst,(u8*)"Task3\r\n",7);
+
+}
 
 int main(void)
 {
@@ -36,20 +50,32 @@ int main(void)
     RCC_voidPeripheralClockEnable(APB2_PERIPHERAL_BUS,RCC_APB2_AFIOEN);
     RCC_voidPeripheralClockEnable(APB2_PERIPHERAL_BUS,RCC_APB2_USART1EN);
     
-    //GPIO_voidInitPinMode(GPIO_PORTB,GPIO_PIN0,INPUT_PULL_DOWN);
-    //GPIO_voidInitPinMode(GPIO_PORTB,GPIO_PIN14,GP_OUT_PUSH_PULL_2MHZ);
 
-    GPIO_voidInitHalfPort(GPIO_PORTA,GP_OUT_PUSH_PULL_2MHZ,0);
+
+    //GPIO_voidInitHalfPort(GPIO_PORTA,GP_OUT_PUSH_PULL_2MHZ,0);
 
     GPIO_voidInitPinMode(GPIO_PORTA,GPIO_PIN9,AF_OUT_PUSH_PULL_50MHZ);
     GPIO_voidInitPinMode(GPIO_PORTA,GPIO_PIN10,INPUT_FLOATING);
  
     
-    NVIC_voidInit();   
-    NVIC_voidSetInterruptPriority(EXTI0_INT,0,0);
-    NVIC_voidEnableInterrupt(EXTI0_INT);
+    // NVIC_voidInit();   
+    // NVIC_voidSetInterruptPriority(EXTI0_INT,0,0);
+    // NVIC_voidEnableInterrupt(EXTI0_INT);
 
-    IR_voidInit(IR_Data);
+    //IR_voidInit(IR_Data);
+
+    GPIO_voidInitPinMode(GPIO_PORTA,GPIO_PIN0,GP_OUT_PUSH_PULL_10MHZ);
+    GPIO_voidInitPinMode(GPIO_PORTA,GPIO_PIN1,GP_OUT_PUSH_PULL_10MHZ);
+    GPIO_voidInitPinMode(GPIO_PORTA,GPIO_PIN2,GP_OUT_PUSH_PULL_10MHZ);
+
+    GPIO_voidWritePin(GPIO_PORTA,GPIO_PIN0,LOW);
+    GPIO_voidWritePin(GPIO_PORTA,GPIO_PIN1,LOW);
+    GPIO_voidWritePin(GPIO_PORTA,GPIO_PIN2,LOW);
+
+    SCHED_voidInit();
+    SCHED_voidAddTask(0,Blink_t1,1000,0);
+    SCHED_voidAddTask(1,Blink_t2,5000,1000);
+    SCHED_voidAddTask(2,Blink_t3,10000,1000);
 
     uart_inst.Uart_t=USART1;
     uart_inst.BaudRate=115200;
