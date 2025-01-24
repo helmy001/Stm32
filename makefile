@@ -13,13 +13,15 @@ BUILD_DIR =00-Build
 LIBDIR = 01-LIB
 MCALDIR = 02-MCAL
 HALDIR = 03-HAL
-APPDIR = 04-APP
+SCHED_DIR=04-SCHEDULAR
+APPDIR = 05-APP
 STARTUP =StartUp
 
 # Source Subdirectories
 LIBSRC = $(wildcard $(LIBDIR)/*/*.c)
 MCALSRC = $(wildcard $(MCALDIR)/*/*.c)
 HALSRC = $(wildcard $(HALDIR)/*/*.c)
+SCHED_SRC= $(wildcard $(SCHED_DIR)/*.c)
 APPSRC = $(wildcard $(APPDIR)/*.c)
 STARTUPSRC= StartUp/StartUpCode.c
 
@@ -28,6 +30,7 @@ STARTUPSRC= StartUp/StartUpCode.c
 LIBOBJ = $(patsubst $(LIBDIR)/%.c, $(BUILD_DIR)/%.o, $(LIBSRC))
 MCALOBJ = $(patsubst $(MCALDIR)/%.c, $(BUILD_DIR)/%.o, $(MCALSRC))
 HALOBJ = $(patsubst $(HALDIR)/%.c, $(BUILD_DIR)/%.o, $(HALSRC))
+SCHED_OBJ = $(patsubst $(SCHED_DIR)/%.c, $(BUILD_DIR)/%.o, $(SCHED_SRC))
 APPOBJ = $(patsubst $(APPDIR)/%.c, $(BUILD_DIR)/%.o, $(APPSRC))
 STARTUPOBJ= $(patsubst $(STARTUP)/%.c, $(BUILD_DIR)/%.o, $(STARTUPSRC))
 
@@ -45,11 +48,12 @@ TARGET = app_program.elf
 
 # Default Target: Clean Build Dir and Build everything
 all: clean $(TARGET)
+	@echo "Generating Hex File From Elf File ..."
 	arm-none-eabi-objcopy -O ihex .\app_program.elf output.hex
 
 
-# #Link all object files into the executable
-$(TARGET): $(LIBOBJ) $(MCALOBJ) $(HALOBJ) $(APPOBJ) $(STARTUPOBJ)
+# Link all object files into the executable
+$(TARGET): $(LIBOBJ) $(MCALOBJ) $(HALOBJ) $(SCHED_OBJ) $(APPOBJ) $(STARTUPOBJ)
 	@echo "Linking all object files into $(TARGET)..."
 	$(CC) $(CCFLAGS) -T Linker/LinkerScript.ld  $(BUILD_DIR)/*.o -o $@ -Wl,-Map=output.map
 
@@ -66,6 +70,10 @@ $(BUILD_DIR)/%.o: $(MCALDIR)/%.c
 	$(CC) $(CCFLAGS) -c $< -o $(BUILD_DIR)/$(notdir $@)
 
 $(BUILD_DIR)/%.o: $(HALDIR)/%.c
+	@echo "Compiling $< into $@..."
+	$(CC) $(CCFLAGS) -c $< -o $(BUILD_DIR)/$(notdir $@)
+
+$(BUILD_DIR)/%.o: $(SCHED_DIR)/%.c
 	@echo "Compiling $< into $@..."
 	$(CC) $(CCFLAGS) -c $< -o $(BUILD_DIR)/$(notdir $@)
 

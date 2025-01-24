@@ -131,14 +131,14 @@ static void IR_DecodeFrame(void)
         {
             //TODO: Should Handle Error in the Address Bits Verfication
             UART_Transmit(&uart_inst,(u8*)"Error Address\r\n",15);
-           // return 254;
+            return 254;
         }
         //Data Verification
         if((DecodedData&0xF00)==~((DecodedData&0xF000)>>8))
         {
             //TODO: Should Handle Error in the Data Bits Verfication
             UART_Transmit(&uart_inst,(u8*)"Error Data\r\n",12);
-            //return 255;
+            return 255;
         }
     #else
 

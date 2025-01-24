@@ -10,6 +10,13 @@
 #include "..\03-HAL\01-LEDMRX\LEDMRX_interface.h"
 #include "..\03-HAL\02-IR_RECEIVER\IR_interface.h"
 
+#include "..\04-SCHEDULAR\SCHED_interface.h"
+
+
+void LED_TASK1(void){}
+void LED_TASK2(void){}
+void LED_TASK3(void){}
+
 
 void blink_led_callback(void);
 void Check_Button();
