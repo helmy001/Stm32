@@ -12,12 +12,16 @@
 #define E_OK          0u
 #define E_NOT_OK      1u
 
+
+typedef unsigned char bool;              
+
 typedef unsigned char u8;              
 /*           0 .. 255             */
 typedef unsigned short int u16;        
 /*           0 .. 65535           */
 typedef unsigned long int u32;        
 /*           0 .. 4294967295      */
+
 
 #ifndef NULL
 #define  NULL ((void*)0) 

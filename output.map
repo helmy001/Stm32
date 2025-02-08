@@ -21,6 +21,7 @@ FLASH            0x08000000         0x00010000         xr
 Linker script and memory map
 
 LOAD 00-Build/AFIO_program.o
+LOAD 00-Build/DMA_program.o
 LOAD 00-Build/EXTI_program.o
 LOAD 00-Build/GPIO_program.o
 LOAD 00-Build/IR_program.o
@@ -51,221 +52,226 @@ END GROUP
  .isr_vector    0x08000000      0x130 00-Build/StartUpCode.o
                 0x08000130                . = ALIGN (0x4)
 
-.text           0x08000130     0x271c
+.text           0x08000130     0x2d64
                 0x08000130                . = ALIGN (0x4)
  *(.text)
  .text          0x08000130       0x80 00-Build/AFIO_program.o
                 0x08000130                AFIO_EXTI_Configuration
- .text          0x080001b0      0x3a0 00-Build/EXTI_program.o
-                0x080001b0                EXTI_voidInit
-                0x080001ea                EXTI_voidEnableEXTI
-                0x0800022c                EXTI_voidDisableEXTI
-                0x08000260                EXTI_voidSetTriggerMode
-                0x08000318                EXTI_voidSWTrigger
-                0x0800034c                EXTI_u8GetPendingFlag
-                0x08000378                EXTI_voidClearPendingFlag
-                0x080003a4                EXTI0_IRQHandler
-                0x080003d0                EXTI1_IRQHandler
-                0x080003fc                EXTI2_IRQHandler
-                0x08000428                EXTI3_IRQHandler
-                0x08000454                EXTI4_IRQHandler
-                0x08000480                EXTI9_5_IRQHandler
-                0x080004e8                EXTI15_10_IRQHandler
- .text          0x08000550      0x434 00-Build/GPIO_program.o
-                0x08000550                GPIO_voidInitPinMode
-                0x08000688                GPIO_voidWritePin
-                0x08000708                GPIO_voidTogglePin
-                0x08000760                GPIO_u8ReadPinValue
-                0x080007b4                GPIO_voidInitHalfPort
-                0x080008cc                GPIO_voidByteWrite
-                0x0800094c                GPIO_u8ReadByte
-                0x08000968                GPIO_voidLockPin
- .text          0x08000984      0x1f4 00-Build/IR_program.o
-                0x08000984                IR_voidInit
-                0x08000b5c                IR_voidStopReceiving
- .text          0x08000b78      0x2f4 00-Build/LEDMRX_program.o
-                0x08000b78                show_letter
-                0x08000bb6                Init_LedMrx_pins
- .text          0x08000e6c      0x1f0 00-Build/NVIC_program.o
-                0x08000e6c                NVIC_voidInit
-                0x08000e78                NVIC_voidEnableInterrupt
-                0x08000ec0                NVIC_voidDisableInterrupt
-                0x08000f08                NVIC_voidSetPendingFlag
-                0x08000f50                NVIC_voidClearPendingFlag
-                0x08000f98                NVIC_u8ReadActiveFlag
-                0x08001020                NVIC_voidSetInterruptPriority
- .text          0x0800105c      0x274 00-Build/RCC_program.o
-                0x0800105c                RCC_voidPeripheralClockEnable
-                0x080010d4                RCC_voidPeripheralClockDisable
-                0x08001150                RCC_voidSetSystemClock
-                0x08001178                RCC_u8ReadSystemClock
-                0x08001194                RCC_voidTurnOnHSE
-                0x08001208                RCC_voidTurnOnHSI
-                0x0800124c                RCC_voidTurnOnPLL
-                0x08001258                RCC_voidSetBusesPrescaler
-                0x080012a8                RCC_Init
- .text          0x080012d0        0x0 00-Build/SCHED_Lconfig.o
- .text          0x080012d0      0x300 00-Build/SCHED_program.o
-                0x080012d0                SCHED_voidInit
-                0x08001410                SCHED_voidAddTask
-                0x080014a0                SCHED_voidDeleteTask
-                0x080014ec                SCHED_voidSuspendTask
-                0x08001538                SCHED_voidResumeTask
-                0x08001584                SCHED_GetTaskStatus
- .text          0x080015d0      0x274 00-Build/SYSTICK_program.o
-                0x080015d0                SYSTICK_u32GetMillis
-                0x080015f4                SYSTICK_voidInit
-                0x08001618                SYSTICK_voidResumeTick
-                0x08001634                SYSTICK_voidSuspendTick
-                0x08001650                SysTick_Handler
-                0x080016cc                SYSTICK_voidBlockingDelay
-                0x08001728                SYSTICK_voidSetIntervalSingle
-                0x08001778                SYSTICK_voidSetIntervalPeriodic
-                0x080017cc                SYSTICK_voidSetAppTick
-                0x08001814                SYSTICK_u32GetElapsedTime
-                0x08001830                SYSTICK_u32GetRemainingTime
- .text          0x08001844       0x94 00-Build/StartUpCode.o
-                0x08001844                Reset_Handler
-                0x080018cc                TIM8_CC_IRQHandler
-                0x080018cc                DebugMon_Handler
-                0x080018cc                TIM1_CC_IRQHandler
-                0x080018cc                HardFault_Handler
-                0x080018cc                TIM6_IRQHandler
-                0x080018cc                PVD_IRQHandler
-                0x080018cc                SDIO_IRQHandler
-                0x080018cc                PendSV_Handler
-                0x080018cc                NMI_Handler
-                0x080018cc                USB_HP_CAN_TX_IRQHandler
-                0x080018cc                I2C2_EV_IRQHandler
-                0x080018cc                UsageFault_Handler
-                0x080018cc                ADC1_2_IRQHandler
-                0x080018cc                SPI1_IRQHandler
-                0x080018cc                CAN_SCE_IRQHandler
-                0x080018cc                TAMPER_IRQHandler
-                0x080018cc                TIM8_UP_IRQHandler
-                0x080018cc                DMA2_Channel2_IRQHandler
-                0x080018cc                DMA1_Channel4_IRQHandler
-                0x080018cc                USART3_IRQHandler
-                0x080018cc                RTC_IRQHandler
-                0x080018cc                DMA1_Channel7_IRQHandler
-                0x080018cc                TIM8_TRG_COM_IRQHandler
-                0x080018cc                UART5_IRQHandler
-                0x080018cc                ADC3_IRQHandler
-                0x080018cc                TIM4_IRQHandler
-                0x080018cc                CAN_RX1_IRQHandler
-                0x080018cc                DMA2_Channel1_IRQHandler
-                0x080018cc                I2C1_EV_IRQHandler
-                0x080018cc                DMA1_Channel6_IRQHandler
-                0x080018cc                UART4_IRQHandler
-                0x080018cc                TIM3_IRQHandler
-                0x080018cc                RCC_IRQHandler
-                0x080018cc                TIM1_TRG_COM_IRQHandler
-                0x080018cc                DMA1_Channel1_IRQHandler
-                0x080018cc                Default_Handler
-                0x080018cc                TIM7_IRQHandler
-                0x080018cc                TIM5_IRQHandler
-                0x080018cc                SPI2_IRQHandler
-                0x080018cc                USB_LP_CAN_RX0_IRQHandler
-                0x080018cc                MemManage_Handler
-                0x080018cc                SVC_Handler
-                0x080018cc                DMA1_Channel5_IRQHandler
-                0x080018cc                DMA1_Channel3_IRQHandler
-                0x080018cc                FSMC_IRQHandler
-                0x080018cc                TIM1_UP_IRQHandler
-                0x080018cc                WWDG_IRQHandler
-                0x080018cc                TIM2_IRQHandler
-                0x080018cc                TIM1_BRK_IRQHandler
-                0x080018cc                RTCAlarm_IRQHandler
-                0x080018cc                DMA2_Channel4_5_IRQHandler
-                0x080018cc                USART2_IRQHandler
-                0x080018cc                I2C2_ER_IRQHandler
-                0x080018cc                DMA1_Channel2_IRQHandler
-                0x080018cc                TIM8_BRK_IRQHandler
-                0x080018cc                FLASH_IRQHandler
-                0x080018cc                BusFault_Handler
-                0x080018cc                USART1_IRQHandler
-                0x080018cc                SPI3_IRQHandler
-                0x080018cc                I2C1_ER_IRQHandler
-                0x080018cc                DMA2_Channel3_IRQHandler
- .text          0x080018d8      0x298 00-Build/UART_program.o
-                0x0800198c                UART_Init
-                0x08001a20                UART_Receive
-                0x08001a38                UART_Transmit
-                0x08001aa0                UART_TransmitNumber
- .text          0x08001b70      0x20c 00-Build/main.o
-                0x08001b70                Blink_t1
-                0x08001b94                Blink_t2
-                0x08001bb8                Blink_t3
-                0x08001bdc                main
-                0x08001ccc                IR_Data
-                0x08001d08                Check_Button
-                0x08001d6c                blink_led_callback
- .text          0x08001d7c      0x254 c:/program files (x86)/gnu arm embedded toolchain/10 2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a(_arm_muldf3.o)
- .text          0x08001fd0      0x378 c:/program files (x86)/gnu arm embedded toolchain/10 2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a(_arm_addsubdf3.o)
-                0x08001fd0                __aeabi_drsub
-                0x08001fd8                __aeabi_dsub
-                0x08001fd8                __subdf3
-                0x08001fdc                __aeabi_dadd
-                0x08001fdc                __adddf3
-                0x08002254                __floatunsidf
-                0x08002254                __aeabi_ui2d
-                0x08002274                __floatsidf
-                0x08002274                __aeabi_i2d
-                0x08002298                __aeabi_f2d
-                0x08002298                __extendsfdf2
-                0x080022dc                __floatundidf
-                0x080022dc                __aeabi_ul2d
-                0x080022ec                __floatdidf
-                0x080022ec                __aeabi_l2d
- .text          0x08002348      0x424 c:/program files (x86)/gnu arm embedded toolchain/10 2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a(_arm_muldivdf3.o)
-                0x08002348                __aeabi_dmul
-                0x08002348                __muldf3
-                0x0800259c                __divdf3
-                0x0800259c                __aeabi_ddiv
- .text          0x0800276c       0x40 c:/program files (x86)/gnu arm embedded toolchain/10 2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a(_arm_fixunsdfsi.o)
-                0x0800276c                __aeabi_d2uiz
-                0x0800276c                __fixunsdfsi
- .text          0x080027ac       0xa0 c:/program files (x86)/gnu arm embedded toolchain/10 2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a(_arm_truncdfsf2.o)
-                0x080027ac                __truncdfsf2
-                0x080027ac                __aeabi_d2f
+ .text          0x080001b0      0x648 00-Build/DMA_program.o
+                0x080001b0                DMA_Init
+                0x0800046c                DMA_Start
+                0x080004c0                DMA_Stop
+                0x08000514                DMA1_Channel1_IRQHandler
+                0x08000578                DMA1_Channel2_IRQHandler
+                0x080005dc                DMA1_Channel3_IRQHandler
+                0x08000648                DMA1_Channel4_IRQHandler
+                0x080006b4                DMA1_Channel5_IRQHandler
+                0x08000720                DMA1_Channel6_IRQHandler
+                0x0800078c                DMA1_Channel7_IRQHandler
+ .text          0x080007f8      0x3a0 00-Build/EXTI_program.o
+                0x080007f8                EXTI_voidInit
+                0x08000832                EXTI_voidEnableEXTI
+                0x08000874                EXTI_voidDisableEXTI
+                0x080008a8                EXTI_voidSetTriggerMode
+                0x08000960                EXTI_voidSWTrigger
+                0x08000994                EXTI_u8GetPendingFlag
+                0x080009c0                EXTI_voidClearPendingFlag
+                0x080009ec                EXTI0_IRQHandler
+                0x08000a18                EXTI1_IRQHandler
+                0x08000a44                EXTI2_IRQHandler
+                0x08000a70                EXTI3_IRQHandler
+                0x08000a9c                EXTI4_IRQHandler
+                0x08000ac8                EXTI9_5_IRQHandler
+                0x08000b30                EXTI15_10_IRQHandler
+ .text          0x08000b98      0x434 00-Build/GPIO_program.o
+                0x08000b98                GPIO_voidInitPinMode
+                0x08000cd0                GPIO_voidWritePin
+                0x08000d50                GPIO_voidTogglePin
+                0x08000da8                GPIO_u8ReadPinValue
+                0x08000dfc                GPIO_voidInitHalfPort
+                0x08000f14                GPIO_voidByteWrite
+                0x08000f94                GPIO_u8ReadByte
+                0x08000fb0                GPIO_voidLockPin
+ .text          0x08000fcc      0x1f4 00-Build/IR_program.o
+                0x08000fcc                IR_voidInit
+                0x080011a4                IR_voidStopReceiving
+ .text          0x080011c0      0x2f4 00-Build/LEDMRX_program.o
+                0x080011c0                show_letter
+                0x080011fe                Init_LedMrx_pins
+ .text          0x080014b4      0x1f0 00-Build/NVIC_program.o
+                0x080014b4                NVIC_voidInit
+                0x080014c0                NVIC_voidEnableInterrupt
+                0x08001508                NVIC_voidDisableInterrupt
+                0x08001550                NVIC_voidSetPendingFlag
+                0x08001598                NVIC_voidClearPendingFlag
+                0x080015e0                NVIC_u8ReadActiveFlag
+                0x08001668                NVIC_voidSetInterruptPriority
+ .text          0x080016a4      0x274 00-Build/RCC_program.o
+                0x080016a4                RCC_voidPeripheralClockEnable
+                0x0800171c                RCC_voidPeripheralClockDisable
+                0x08001798                RCC_voidSetSystemClock
+                0x080017c0                RCC_u8ReadSystemClock
+                0x080017dc                RCC_voidTurnOnHSE
+                0x08001850                RCC_voidTurnOnHSI
+                0x08001894                RCC_voidTurnOnPLL
+                0x080018a0                RCC_voidSetBusesPrescaler
+                0x080018f0                RCC_Init
+ .text          0x08001918        0x0 00-Build/SCHED_Lconfig.o
+ .text          0x08001918      0x300 00-Build/SCHED_program.o
+                0x08001918                SCHED_voidInit
+                0x08001a58                SCHED_voidAddTask
+                0x08001ae8                SCHED_voidDeleteTask
+                0x08001b34                SCHED_voidSuspendTask
+                0x08001b80                SCHED_voidResumeTask
+                0x08001bcc                SCHED_GetTaskStatus
+ .text          0x08001c18      0x274 00-Build/SYSTICK_program.o
+                0x08001c18                SYSTICK_u32GetMillis
+                0x08001c3c                SYSTICK_voidInit
+                0x08001c60                SYSTICK_voidResumeTick
+                0x08001c7c                SYSTICK_voidSuspendTick
+                0x08001c98                SysTick_Handler
+                0x08001d14                SYSTICK_voidBlockingDelay
+                0x08001d70                SYSTICK_voidSetIntervalSingle
+                0x08001dc0                SYSTICK_voidSetIntervalPeriodic
+                0x08001e14                SYSTICK_voidSetAppTick
+                0x08001e5c                SYSTICK_u32GetElapsedTime
+                0x08001e78                SYSTICK_u32GetRemainingTime
+ .text          0x08001e8c       0x94 00-Build/StartUpCode.o
+                0x08001e8c                Reset_Handler
+                0x08001f14                TIM8_CC_IRQHandler
+                0x08001f14                DebugMon_Handler
+                0x08001f14                TIM1_CC_IRQHandler
+                0x08001f14                HardFault_Handler
+                0x08001f14                TIM6_IRQHandler
+                0x08001f14                PVD_IRQHandler
+                0x08001f14                SDIO_IRQHandler
+                0x08001f14                PendSV_Handler
+                0x08001f14                NMI_Handler
+                0x08001f14                USB_HP_CAN_TX_IRQHandler
+                0x08001f14                I2C2_EV_IRQHandler
+                0x08001f14                UsageFault_Handler
+                0x08001f14                ADC1_2_IRQHandler
+                0x08001f14                SPI1_IRQHandler
+                0x08001f14                CAN_SCE_IRQHandler
+                0x08001f14                TAMPER_IRQHandler
+                0x08001f14                TIM8_UP_IRQHandler
+                0x08001f14                DMA2_Channel2_IRQHandler
+                0x08001f14                USART3_IRQHandler
+                0x08001f14                RTC_IRQHandler
+                0x08001f14                TIM8_TRG_COM_IRQHandler
+                0x08001f14                UART5_IRQHandler
+                0x08001f14                ADC3_IRQHandler
+                0x08001f14                TIM4_IRQHandler
+                0x08001f14                CAN_RX1_IRQHandler
+                0x08001f14                DMA2_Channel1_IRQHandler
+                0x08001f14                I2C1_EV_IRQHandler
+                0x08001f14                UART4_IRQHandler
+                0x08001f14                TIM3_IRQHandler
+                0x08001f14                RCC_IRQHandler
+                0x08001f14                TIM1_TRG_COM_IRQHandler
+                0x08001f14                Default_Handler
+                0x08001f14                TIM7_IRQHandler
+                0x08001f14                TIM5_IRQHandler
+                0x08001f14                SPI2_IRQHandler
+                0x08001f14                USB_LP_CAN_RX0_IRQHandler
+                0x08001f14                MemManage_Handler
+                0x08001f14                SVC_Handler
+                0x08001f14                FSMC_IRQHandler
+                0x08001f14                TIM1_UP_IRQHandler
+                0x08001f14                WWDG_IRQHandler
+                0x08001f14                TIM2_IRQHandler
+                0x08001f14                TIM1_BRK_IRQHandler
+                0x08001f14                RTCAlarm_IRQHandler
+                0x08001f14                DMA2_Channel4_5_IRQHandler
+                0x08001f14                USART2_IRQHandler
+                0x08001f14                I2C2_ER_IRQHandler
+                0x08001f14                TIM8_BRK_IRQHandler
+                0x08001f14                FLASH_IRQHandler
+                0x08001f14                BusFault_Handler
+                0x08001f14                USART1_IRQHandler
+                0x08001f14                SPI3_IRQHandler
+                0x08001f14                I2C1_ER_IRQHandler
+                0x08001f14                DMA2_Channel3_IRQHandler
+ .text          0x08001f20      0x298 00-Build/UART_program.o
+                0x08001fd4                UART_Init
+                0x08002068                UART_Receive
+                0x08002080                UART_Transmit
+                0x080020e8                UART_TransmitNumber
+ .text          0x080021b8      0x20c 00-Build/main.o
+                0x080021b8                Blink_t1
+                0x080021dc                Blink_t2
+                0x08002200                Blink_t3
+                0x08002224                main
+                0x08002314                IR_Data
+                0x08002350                Check_Button
+                0x080023b4                blink_led_callback
+ .text          0x080023c4      0x254 c:/program files (x86)/gnu arm embedded toolchain/10 2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a(_arm_muldf3.o)
+ .text          0x08002618      0x378 c:/program files (x86)/gnu arm embedded toolchain/10 2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a(_arm_addsubdf3.o)
+                0x08002618                __aeabi_drsub
+                0x08002620                __aeabi_dsub
+                0x08002620                __subdf3
+                0x08002624                __aeabi_dadd
+                0x08002624                __adddf3
+                0x0800289c                __floatunsidf
+                0x0800289c                __aeabi_ui2d
+                0x080028bc                __floatsidf
+                0x080028bc                __aeabi_i2d
+                0x080028e0                __aeabi_f2d
+                0x080028e0                __extendsfdf2
+                0x08002924                __floatundidf
+                0x08002924                __aeabi_ul2d
+                0x08002934                __floatdidf
+                0x08002934                __aeabi_l2d
+ .text          0x08002990      0x424 c:/program files (x86)/gnu arm embedded toolchain/10 2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a(_arm_muldivdf3.o)
+                0x08002990                __aeabi_dmul
+                0x08002990                __muldf3
+                0x08002be4                __divdf3
+                0x08002be4                __aeabi_ddiv
+ .text          0x08002db4       0x40 c:/program files (x86)/gnu arm embedded toolchain/10 2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a(_arm_fixunsdfsi.o)
+                0x08002db4                __aeabi_d2uiz
+                0x08002db4                __fixunsdfsi
+ .text          0x08002df4       0xa0 c:/program files (x86)/gnu arm embedded toolchain/10 2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a(_arm_truncdfsf2.o)
+                0x08002df4                __truncdfsf2
+                0x08002df4                __aeabi_d2f
  *(.text*)
-                0x0800284c                . = ALIGN (0x4)
-                0x0800284c                _etext = .
+                0x08002e94                . = ALIGN (0x4)
+                0x08002e94                _etext = .
 
-.glue_7         0x0800284c        0x0
- .glue_7        0x0800284c        0x0 linker stubs
+.glue_7         0x08002e94        0x0
+ .glue_7        0x08002e94        0x0 linker stubs
 
-.glue_7t        0x0800284c        0x0
- .glue_7t       0x0800284c        0x0 linker stubs
+.glue_7t        0x08002e94        0x0
+ .glue_7t       0x08002e94        0x0 linker stubs
 
-.vfp11_veneer   0x0800284c        0x0
- .vfp11_veneer  0x0800284c        0x0 linker stubs
+.vfp11_veneer   0x08002e94        0x0
+ .vfp11_veneer  0x08002e94        0x0 linker stubs
 
-.v4_bx          0x0800284c        0x0
- .v4_bx         0x0800284c        0x0 linker stubs
+.v4_bx          0x08002e94        0x0
+ .v4_bx         0x08002e94        0x0 linker stubs
 
-.iplt           0x0800284c        0x0
- .iplt          0x0800284c        0x0 00-Build/EXTI_program.o
+.iplt           0x08002e94        0x0
+ .iplt          0x08002e94        0x0 00-Build/DMA_program.o
 
-.rodata         0x0800284c       0x2c
-                0x0800284c                . = ALIGN (0x4)
+.rodata         0x08002e94       0x2c
+                0x08002e94                . = ALIGN (0x4)
  *(.rodata)
- .rodata        0x0800284c        0xd 00-Build/IR_program.o
- *fill*         0x08002859        0x3 
- .rodata        0x0800285c       0x1b 00-Build/main.o
+ .rodata        0x08002e94        0xd 00-Build/IR_program.o
+ *fill*         0x08002ea1        0x3 
+ .rodata        0x08002ea4       0x1b 00-Build/main.o
  *(.rodata*)
-                0x08002878                . = ALIGN (0x4)
- *fill*         0x08002877        0x1 
-                0x08002878                _iFlashdata = LOADADDR (.data)
+                0x08002ec0                . = ALIGN (0x4)
+ *fill*         0x08002ebf        0x1 
+                0x08002ec0                _iFlashdata = LOADADDR (.data)
 
-.rel.dyn        0x08002878        0x0
- .rel.iplt      0x08002878        0x0 00-Build/EXTI_program.o
+.rel.dyn        0x08002ec0        0x0
+ .rel.iplt      0x08002ec0        0x0 00-Build/DMA_program.o
 
-.data           0x20000000       0x48 load address 0x08002878
+.data           0x20000000       0x48 load address 0x08002ec0
                 0x20000000                _idata = .
                 0x20000000                . = ALIGN (0x4)
  *(.data)
  .data          0x20000000        0x0 00-Build/AFIO_program.o
+ .data          0x20000000        0x0 00-Build/DMA_program.o
  .data          0x20000000        0x0 00-Build/EXTI_program.o
  .data          0x20000000        0xc 00-Build/GPIO_program.o
  .data          0x2000000c        0x0 00-Build/IR_program.o
@@ -288,54 +294,56 @@ END GROUP
                 0x20000048                . = ALIGN (0x4)
                 0x20000048                _edata = .
 
-.igot.plt       0x20000048        0x0 load address 0x080028c0
- .igot.plt      0x20000048        0x0 00-Build/EXTI_program.o
+.igot.plt       0x20000048        0x0 load address 0x08002f08
+ .igot.plt      0x20000048        0x0 00-Build/DMA_program.o
 
-.bss            0x20000048      0x12c load address 0x080028c0
+.bss            0x20000048      0x19c load address 0x08002f08
                 0x20000048                _ibss = .
                 0x20000048                . = ALIGN (0x4)
  *(.bss)
  .bss           0x20000048        0x0 00-Build/AFIO_program.o
- .bss           0x20000048       0x40 00-Build/EXTI_program.o
- .bss           0x20000088        0x0 00-Build/GPIO_program.o
- .bss           0x20000088       0x8d 00-Build/IR_program.o
- .bss           0x20000115        0x0 00-Build/LEDMRX_program.o
- .bss           0x20000115        0x0 00-Build/NVIC_program.o
- .bss           0x20000115        0x0 00-Build/RCC_program.o
- .bss           0x20000115        0x0 00-Build/SCHED_Lconfig.o
- *fill*         0x20000115        0x3 
- .bss           0x20000118       0x34 00-Build/SCHED_program.o
- .bss           0x2000014c        0xc 00-Build/SYSTICK_program.o
-                0x20000154                SYSTICK_CallBack
- .bss           0x20000158        0x0 00-Build/StartUpCode.o
- .bss           0x20000158        0x0 00-Build/UART_program.o
- .bss           0x20000158       0x19 00-Build/main.o
-                0x20000158                uart_inst
- .bss           0x20000171        0x0 c:/program files (x86)/gnu arm embedded toolchain/10 2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a(_arm_muldf3.o)
- .bss           0x20000171        0x0 c:/program files (x86)/gnu arm embedded toolchain/10 2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a(_arm_addsubdf3.o)
- .bss           0x20000171        0x0 c:/program files (x86)/gnu arm embedded toolchain/10 2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a(_arm_muldivdf3.o)
- .bss           0x20000171        0x0 c:/program files (x86)/gnu arm embedded toolchain/10 2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a(_arm_fixunsdfsi.o)
- .bss           0x20000171        0x0 c:/program files (x86)/gnu arm embedded toolchain/10 2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a(_arm_truncdfsf2.o)
+ .bss           0x20000048       0x70 00-Build/DMA_program.o
+ .bss           0x200000b8       0x40 00-Build/EXTI_program.o
+ .bss           0x200000f8        0x0 00-Build/GPIO_program.o
+ .bss           0x200000f8       0x8d 00-Build/IR_program.o
+ .bss           0x20000185        0x0 00-Build/LEDMRX_program.o
+ .bss           0x20000185        0x0 00-Build/NVIC_program.o
+ .bss           0x20000185        0x0 00-Build/RCC_program.o
+ .bss           0x20000185        0x0 00-Build/SCHED_Lconfig.o
+ *fill*         0x20000185        0x3 
+ .bss           0x20000188       0x34 00-Build/SCHED_program.o
+ .bss           0x200001bc        0xc 00-Build/SYSTICK_program.o
+                0x200001c4                SYSTICK_CallBack
+ .bss           0x200001c8        0x0 00-Build/StartUpCode.o
+ .bss           0x200001c8        0x0 00-Build/UART_program.o
+ .bss           0x200001c8       0x19 00-Build/main.o
+                0x200001c8                uart_inst
+ .bss           0x200001e1        0x0 c:/program files (x86)/gnu arm embedded toolchain/10 2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a(_arm_muldf3.o)
+ .bss           0x200001e1        0x0 c:/program files (x86)/gnu arm embedded toolchain/10 2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a(_arm_addsubdf3.o)
+ .bss           0x200001e1        0x0 c:/program files (x86)/gnu arm embedded toolchain/10 2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a(_arm_muldivdf3.o)
+ .bss           0x200001e1        0x0 c:/program files (x86)/gnu arm embedded toolchain/10 2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a(_arm_fixunsdfsi.o)
+ .bss           0x200001e1        0x0 c:/program files (x86)/gnu arm embedded toolchain/10 2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a(_arm_truncdfsf2.o)
  *(.bss*)
-                0x20000174                . = ALIGN (0x4)
- *fill*         0x20000171        0x3 
-                0x20000174                _ebss = .
+                0x200001e4                . = ALIGN (0x4)
+ *fill*         0x200001e1        0x3 
+                0x200001e4                _ebss = .
 
 .user_heap_stack
-                0x20000174      0x604 load address 0x080028c0
-                0x20000178                . = ALIGN (0x8)
- *fill*         0x20000174        0x4 
-                0x20000378                . = (. + _Min_Heap_Size)
- *fill*         0x20000178      0x200 
-                0x20000778                . = (. + _Min_Stack_Size)
- *fill*         0x20000378      0x400 
-                0x20000778                . = ALIGN (0x8)
+                0x200001e4      0x604 load address 0x08002f08
+                0x200001e8                . = ALIGN (0x8)
+ *fill*         0x200001e4        0x4 
+                0x200003e8                . = (. + _Min_Heap_Size)
+ *fill*         0x200001e8      0x200 
+                0x200007e8                . = (. + _Min_Stack_Size)
+ *fill*         0x200003e8      0x400 
+                0x200007e8                . = ALIGN (0x8)
 OUTPUT(app_program.elf elf32-littlearm)
 LOAD linker stubs
 
 .comment        0x00000000       0x4d
  .comment       0x00000000       0x4d 00-Build/AFIO_program.o
                                  0x4e (size before relaxing)
+ .comment       0x0000004d       0x4e 00-Build/DMA_program.o
  .comment       0x0000004d       0x4e 00-Build/EXTI_program.o
  .comment       0x0000004d       0x4e 00-Build/GPIO_program.o
  .comment       0x0000004d       0x4e 00-Build/IR_program.o
@@ -354,39 +362,41 @@ LOAD linker stubs
  .ARM.attributes
                 0x00000000       0x2d 00-Build/AFIO_program.o
  .ARM.attributes
-                0x0000002d       0x2d 00-Build/EXTI_program.o
+                0x0000002d       0x2d 00-Build/DMA_program.o
  .ARM.attributes
-                0x0000005a       0x2d 00-Build/GPIO_program.o
+                0x0000005a       0x2d 00-Build/EXTI_program.o
  .ARM.attributes
-                0x00000087       0x2d 00-Build/IR_program.o
+                0x00000087       0x2d 00-Build/GPIO_program.o
  .ARM.attributes
-                0x000000b4       0x2d 00-Build/LEDMRX_program.o
+                0x000000b4       0x2d 00-Build/IR_program.o
  .ARM.attributes
-                0x000000e1       0x2d 00-Build/NVIC_program.o
+                0x000000e1       0x2d 00-Build/LEDMRX_program.o
  .ARM.attributes
-                0x0000010e       0x2d 00-Build/RCC_program.o
+                0x0000010e       0x2d 00-Build/NVIC_program.o
  .ARM.attributes
-                0x0000013b       0x33 00-Build/SCHED_Lconfig.o
+                0x0000013b       0x2d 00-Build/RCC_program.o
  .ARM.attributes
-                0x0000016e       0x2d 00-Build/SCHED_program.o
+                0x00000168       0x33 00-Build/SCHED_Lconfig.o
  .ARM.attributes
-                0x0000019b       0x2d 00-Build/SYSTICK_program.o
+                0x0000019b       0x2d 00-Build/SCHED_program.o
  .ARM.attributes
-                0x000001c8       0x2d 00-Build/StartUpCode.o
+                0x000001c8       0x2d 00-Build/SYSTICK_program.o
  .ARM.attributes
-                0x000001f5       0x2d 00-Build/UART_program.o
+                0x000001f5       0x2d 00-Build/StartUpCode.o
  .ARM.attributes
-                0x00000222       0x2d 00-Build/main.o
+                0x00000222       0x2d 00-Build/UART_program.o
  .ARM.attributes
-                0x0000024f       0x1d c:/program files (x86)/gnu arm embedded toolchain/10 2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a(_arm_muldf3.o)
+                0x0000024f       0x2d 00-Build/main.o
  .ARM.attributes
-                0x0000026c       0x1d c:/program files (x86)/gnu arm embedded toolchain/10 2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a(_arm_addsubdf3.o)
+                0x0000027c       0x1d c:/program files (x86)/gnu arm embedded toolchain/10 2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a(_arm_muldf3.o)
  .ARM.attributes
-                0x00000289       0x1d c:/program files (x86)/gnu arm embedded toolchain/10 2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a(_arm_muldivdf3.o)
+                0x00000299       0x1d c:/program files (x86)/gnu arm embedded toolchain/10 2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a(_arm_addsubdf3.o)
  .ARM.attributes
-                0x000002a6       0x1d c:/program files (x86)/gnu arm embedded toolchain/10 2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a(_arm_fixunsdfsi.o)
+                0x000002b6       0x1d c:/program files (x86)/gnu arm embedded toolchain/10 2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a(_arm_muldivdf3.o)
  .ARM.attributes
-                0x000002c3       0x1d c:/program files (x86)/gnu arm embedded toolchain/10 2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a(_arm_truncdfsf2.o)
+                0x000002d3       0x1d c:/program files (x86)/gnu arm embedded toolchain/10 2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a(_arm_fixunsdfsi.o)
+ .ARM.attributes
+                0x000002f0       0x1d c:/program files (x86)/gnu arm embedded toolchain/10 2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a(_arm_truncdfsf2.o)
 
 .debug_frame    0x00000000      0x174
  .debug_frame   0x00000000       0x30 c:/program files (x86)/gnu arm embedded toolchain/10 2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a(_arm_muldf3.o)

@@ -1,12 +1,11 @@
 /**************************************************************/
 /* Author    : Helmy                                          */
-/* Date      : 22/1/2025                                      */
+/* Date      : 8/2/2025                                      */
 /* Version   : v1.0                                           */
 /************************************************************ */
-#include "..\01-LIB\STD_TYPES.h"
-#include "..\01-LIB\BIT_MATH.h"
-
-#include "SCHED_interface.h"
-#include "SCHED_config.h"
+#ifndef DMA_CONFIG_H
+#define DMA_CONFIG_H
 
 
+
+#endif

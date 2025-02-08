@@ -8,7 +8,6 @@
 #include "..\01-LIB\BIT_MATH.h"
 
 
-#include "..\02-MCAL\07-UART\UART_interface.h"
 #include "..\02-MCAL\06-SYSTICK\SYSTICK_interface.h"
 
 

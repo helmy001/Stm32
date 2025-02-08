@@ -45,8 +45,5 @@ u8   EXTI_u8GetPendingFlag(u8 Copy_u8Pin);
 void EXTI_voidClearPendingFlag(u8 Copy_u8Pin);
 
 
-//TODO: function to read the pending flag 
-//TODO: function to Clear the pending flag 
-
 
 #endif
